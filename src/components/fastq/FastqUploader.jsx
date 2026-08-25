@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from "react";
-import { Upload, FileUp, X, Sparkles, Loader2 } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { Upload, X, Sparkles, Loader2 } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel } from "../ui/Primitives.jsx";
 import { formatBytes } from "../../lib/fastq/stats.js";

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, ChevronDown, ArrowUpDown } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow } from "../ui/Primitives.jsx";
@@ -19,7 +19,7 @@ function QualityStrip({ qual, width = 200 }) {
   );
 }
 
-export default function FastqReadTable({ dataset, index, qualityThreshold, minLength, maxLength, getRecord }) {
+export default function FastqReadTable({ index, qualityThreshold, minLength, maxLength, getRecord }) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("index");
   const [sortDir, setSortDir] = useState("asc");
@@ -48,11 +48,10 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
     return arr;
   }, [index, search, sortKey, sortDir]);
 
-  useEffect(() => { setScrollTop(0); if (scrollRef.current) scrollRef.current.scrollTop = 0; }, [search, sortKey, sortDir]);
-
   useEffect(() => {
-    if (expanded === null) { setExpandedRecord(null); return; }
+    if (expanded === null) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadingRecord(true);
     getRecord(expanded).then((rec) => { if (!cancelled) { setExpandedRecord(rec); setLoadingRecord(false); } });
     return () => { cancelled = true; };
@@ -68,7 +67,18 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
   function toggleSort(key) {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortKey(key); setSortDir("desc"); }
+    setScrollTop(0);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }
+
+  function handleSearch(e) {
+    setSearch(e.target.value);
+    setScrollTop(0);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }
+
+  const expandedOrderIdx = expanded !== null ? order.indexOf(expanded) : -1;
+  const EXPANDED_HEIGHT = 140;
 
   return (
     <Panel style={{ padding: 16 }}>
@@ -76,7 +86,7 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
         <Eyebrow color={C.raw}>Reads ({total.toLocaleString()}{search ? ` matching "${search}"` : ""})</Eyebrow>
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
           <Search size={13} color={C.textFaint} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search read ID…"
+          <input value={search} onChange={handleSearch} placeholder="Search read ID…"
             style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, padding: "5px 10px", fontSize: 12, color: C.text, width: 180, fontFamily: FONT_DISPLAY }} />
         </div>
       </div>
@@ -91,15 +101,20 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
 
       <div ref={scrollRef} onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
         style={{ height: VIEWPORT_HEIGHT, overflowY: "auto", position: "relative" }}>
-        <div style={{ height: total * ROW_HEIGHT, position: "relative" }}>
+        <div style={{ height: total * ROW_HEIGHT + (expanded !== null ? EXPANDED_HEIGHT : 0), position: "relative" }}>
           {visible.map((i, vi) => {
-            const rowTop = (startIdx + vi) * ROW_HEIGHT;
+            const rowOrderIdx = startIdx + vi;
+            const rowTop = rowOrderIdx * ROW_HEIGHT + (expandedOrderIdx !== -1 && rowOrderIdx > expandedOrderIdx ? EXPANDED_HEIGHT : 0);
             const len = index.lengths[i], q = index.meanQs[i], id = index.ids[i];
             const pass = q >= qualityThreshold && len >= minLength && (!maxLength || len <= maxLength);
             const isOpen = expanded === i;
             return (
               <div key={i} style={{ position: "absolute", top: rowTop, left: 0, right: 0 }}>
-                <div onClick={() => setExpanded(isOpen ? null : i)}
+                <div onClick={() => {
+                  const willOpen = !isOpen;
+                  setExpanded(willOpen ? i : null);
+                  if (!willOpen) setExpandedRecord(null);
+                }}
                   style={{ display: "flex", alignItems: "center", gap: 12, height: ROW_HEIGHT, padding: "0 4px", cursor: "pointer", borderBottom: `1px solid ${C.border}`, fontFamily: FONT_DISPLAY }}>
                   <span style={{ width: 8, height: 8, borderRadius: 2, background: pass ? C.good : C.bad, flexShrink: 0 }} />
                   <span style={{ fontFamily: FONT_DISPLAY, fontSize: 11.5, color: C.text, width: 82, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{id}</span>

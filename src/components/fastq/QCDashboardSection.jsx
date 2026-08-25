@@ -1,4 +1,3 @@
-import React from "react";
 import { Microscope, Link2 } from "lucide-react";
 import { C } from "../../theme.js";
 import { SectionTitle, ExplainBox, Panel } from "../ui/Primitives.jsx";

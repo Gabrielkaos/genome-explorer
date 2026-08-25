@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow, ExplainBox } from "../ui/Primitives.jsx";
@@ -26,7 +26,6 @@ export default function FastqFilterControls({
       const skipped = result?.skipped;
       downloadBlob(result, `filtered_${dataset.fileName.replace(/\.gz$/i, "")}`);
       if (skipped) {
-        // eslint-disable-next-line no-alert
         alert(`${skipped} passing read(s) beyond the in-memory preview window for this gzip file could not be included. Export from an uncompressed .fastq for a complete filtered file.`);
       }
     } finally {

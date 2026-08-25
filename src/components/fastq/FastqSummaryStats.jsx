@@ -1,9 +1,8 @@
-import React from "react";
 import { C } from "../../theme.js";
 import { StatCard, Eyebrow } from "../ui/Primitives.jsx";
 import { formatBases, formatBytes } from "../../lib/fastq/stats.js";
 
-export default function FastqSummaryStats({ dataset, passCount, passPct }) {
+export default function FastqSummaryStats({ dataset, passPct }) {
   if (!dataset) return null;
   return (
     <div>

@@ -127,4 +127,3 @@ export function SectionTitle({ icon: Icon, color, title, subtitle }) {
   );
 }
 
-export const tooltipStyle = { background: "#0a0e16", border: `1px solid ${C.border}`, borderRadius: 2, fontSize: 11, color: C.text, fontFamily: FONT };

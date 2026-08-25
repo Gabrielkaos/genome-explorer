@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ScrollText } from "lucide-react";
 import { C } from "../../theme.js";
 import { SectionTitle } from "../ui/Primitives.jsx";

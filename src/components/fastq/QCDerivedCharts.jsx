@@ -1,10 +1,11 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import {
   AreaChart, Area, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceDot, ReferenceLine,
 } from "recharts";
 import { C } from "../../theme.js";
-import { Panel, Eyebrow, tooltipStyle } from "../ui/Primitives.jsx";
+import { Panel, Eyebrow} from "../ui/Primitives.jsx";
+import { tooltipStyle } from "../../theme.js";
 import { computeYieldByLength, computeGCHistogram, computePositionalQuality } from "../../lib/fastq/qcDerived.js";
 import { formatBases } from "../../lib/fastq/stats.js";
 

@@ -24,3 +24,4 @@ export const FONT_DISPLAY = FONT;
 export const FONT_HEAD = FONT;
 export const FONT_BODY = FONT;
 export const FONT_IMPORT = "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');";
+export const tooltipStyle = { background: "#0a0e16", border: `1px solid ${C.border}`, borderRadius: 2, fontSize: 11, color: C.text, fontFamily: FONT };

@@ -1,10 +1,11 @@
+import { tooltipStyle } from "../../theme.js";
 import { useMemo } from "react";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ReferenceLine, Cell,
 } from "recharts";
 import { C, FONT_DISPLAY } from "../../theme.js";
-import { tooltipStyle } from "../ui/Primitives.jsx";
+
 
 const X_CLAMP = 9; // log2 OR clamp so perfectly-segregating features stay on-plot
 

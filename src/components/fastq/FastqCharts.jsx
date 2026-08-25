@@ -1,10 +1,11 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ScatterChart, Scatter, Cell, ZAxis,
 } from "recharts";
 import { C } from "../../theme.js";
-import { Panel, Eyebrow, tooltipStyle } from "../ui/Primitives.jsx";
+import { Panel, Eyebrow} from "../ui/Primitives.jsx";
+import { tooltipStyle } from "../../theme.js";
 
 function ChartPanel({ title, color, children }) {
   return (

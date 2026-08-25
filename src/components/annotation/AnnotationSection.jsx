@@ -1,4 +1,3 @@
-import React from "react";
 import { Layers } from "lucide-react";
 import { C } from "../../theme.js";
 import { SectionTitle, LimitBanner } from "../ui/Primitives.jsx";

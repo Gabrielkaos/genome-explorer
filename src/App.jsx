@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import {
-  Dna, Microscope, GitBranch, Network,
-  Filter, HelpCircle, ChevronRight, X,
+  Microscope, GitBranch, Network,
+  Filter, ChevronRight, X,
   Layers, Table2, Waypoints, CircuitBoard,
   ScrollText,
 } from "lucide-react";
-import { C, FONT, FONT_DISPLAY, FONT_HEAD, FONT_BODY, FONT_IMPORT } from "./theme.js";
+import { C, FONT, FONT_IMPORT } from "./theme.js";
 import { Panel, Eyebrow, ExplainBox, LimitBanner, SectionTitle } from "./components/ui/Primitives.jsx";
 import { FastqDataProvider } from "./state/FastqDataContext.jsx";
-import FastqSection from "./components/fastq/FastqSection.jsx";
-import QCDashboardSection from "./components/fastq/QCDashboardSection.jsx";
-import AssemblySection from "./components/assembly/AssemblySection.jsx";
-import AnnotationSection from "./components/annotation/AnnotationSection.jsx";
-import AlignmentSection from "./components/msa/MsaSection.jsx";
-import PhyloSection from "./components/phylo/PhyloSection.jsx";
-import AssocSection from "./components/assoc/AssocSection.jsx";
-import ExplorerSection from "./components/explorer/ExplorerSection.jsx";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary.jsx";
+
+const FastqSection = lazy(() => import("./components/fastq/FastqSection.jsx"));
+const QCDashboardSection = lazy(() => import("./components/fastq/QCDashboardSection.jsx"));
+const AssemblySection = lazy(() => import("./components/assembly/AssemblySection.jsx"));
+const AnnotationSection = lazy(() => import("./components/annotation/AnnotationSection.jsx"));
+const AlignmentSection = lazy(() => import("./components/msa/MsaSection.jsx"));
+const PhyloSection = lazy(() => import("./components/phylo/PhyloSection.jsx"));
+const AssocSection = lazy(() => import("./components/assoc/AssocSection.jsx"));
+const ExplorerSection = lazy(() => import("./components/explorer/ExplorerSection.jsx"));
 
 /* =====================================================================================
    DESIGN TOKENS
@@ -337,15 +339,19 @@ function AppShell() {
           {explainMode && <span style={{ color: C.raw }}>--explain</span>}
         </div>
 
-        {section === "overview" && <PipelineOverview explainMode={explainMode} onJump={setSection} />}
-        {section === "fastq" && <FastqSection explainMode={explainMode} />}
-        {section === "qc" && <QCDashboardSection explainMode={explainMode} />}
-        {section === "assembly" && <AssemblySection explainMode={explainMode} />}
-        {section === "annotation" && <AnnotationSection explainMode={explainMode} />}
-        {section === "msa" && <AlignmentSection explainMode={explainMode} />}
-        {section === "tree" && <PhyloSection explainMode={explainMode} />}
-        {section === "assoc" && <AssocSection explainMode={explainMode} />}
-        {section === "explorer" && <ExplorerSection explainMode={explainMode} />}
+        <ErrorBoundary>
+          <Suspense fallback={<div style={{ padding: 40, color: C.textDim, fontFamily: FONT }}>Loading section...</div>}>
+            {section === "overview" && <PipelineOverview explainMode={explainMode} onJump={setSection} />}
+            {section === "fastq" && <FastqSection explainMode={explainMode} />}
+            {section === "qc" && <QCDashboardSection explainMode={explainMode} />}
+            {section === "assembly" && <AssemblySection explainMode={explainMode} />}
+            {section === "annotation" && <AnnotationSection explainMode={explainMode} />}
+            {section === "msa" && <AlignmentSection explainMode={explainMode} />}
+            {section === "tree" && <PhyloSection explainMode={explainMode} />}
+            {section === "assoc" && <AssocSection explainMode={explainMode} />}
+            {section === "explorer" && <ExplorerSection explainMode={explainMode} />}
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </div>
   );

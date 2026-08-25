@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Waypoints, Play, Loader2, Download, AlertTriangle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Waypoints, Play, Loader2, AlertTriangle } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow, SectionTitle, StatCard, LimitBanner, ExplainBox } from "../ui/Primitives.jsx";
 import { useFastqData } from "../../state/FastqDataContext.jsx";

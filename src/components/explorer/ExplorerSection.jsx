@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { CircuitBoard, Upload, FileText, MousePointer2, Hand, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow, SectionTitle, LimitBanner, ExplainBox } from "../ui/Primitives.jsx";
-import { useFastqData } from "../../state/FastqDataContext.jsx";
 import { parseGff3, parseGenbank } from "../../lib/explorer/gff.js";
 import { buildTracks, skewExtrema } from "../../lib/explorer/tracks.js";
 import { generateExampleGenome } from "../../lib/sampleData/generateExampleGenome.js";
@@ -52,10 +51,7 @@ function synthesizeContigRecords(featuresByContig, sequenceRegions = new Map()) 
 }
 
 export default function ExplorerSection({ explainMode }) {
-  const { asm, ann } = useFastqData();
-
-  const sessionReady = asm.status === "done" && asm.contigs?.length > 0;
-  const [source, setSource] = useState(sessionReady ? "session" : "example"); // session | upload | example
+  const [source, setSource] = useState("example"); // upload | example
   const [upload, setUpload] = useState(null);      // {records:[{id,desc,seq,circular}], featuresByContig, name, placeholderSeq}
   const [contigIdx, setContigIdx] = useState(0);
   const [mode, setMode] = useState("pan");         // pan | select
@@ -76,22 +72,7 @@ export default function ExplorerSection({ explainMode }) {
     };
   }, []);
 
-  const session = useMemo(() => {
-    if (!sessionReady) return null;
-    const records = asm.contigs.map((c) => ({ id: c.id, desc: c.desc ?? c.id, seq: c.seq, circular: !!c.circular }));
-    const fb = new Map();
-    for (const g of ann.genes ?? []) {
-      if (!fb.has(g.contigId)) fb.set(g.contigId, []);
-      fb.get(g.contigId).push({
-        contigId: g.contigId, type: "CDS",
-        start: g.start, end: g.end, strand: g.strand,
-        locusTag: g.locusTag, product: g.product,
-      });
-    }
-    return { records, featuresByContig: fb, numFeatures: (ann.genes ?? []).length, name: "session assembly" };
-  }, [asm.contigs, ann.genes, sessionReady]);
-
-  const active = source === "session" ? (session ?? example) : source === "upload" ? (upload ?? example) : example;
+  const active = source === "upload" ? (upload ?? example) : example;
   const record = active.records && active.records.length > 0
     ? active.records[Math.min(Math.max(0, contigIdx), active.records.length - 1)]
     : null;
@@ -105,7 +86,7 @@ export default function ExplorerSection({ explainMode }) {
 
   const tracks = useMemo(
     () => (!record?.seq ? { window: 100, step: 50, starts: [], gc: [], skew: [] } : buildTracks(record.seq)),
-    [record?.seq]
+    [record]
   );
   const oriPos = useMemo(
     () => (record?.circular ? skewExtrema(tracks)?.originPos : undefined),
@@ -118,7 +99,7 @@ export default function ExplorerSection({ explainMode }) {
   const curUi = uiByContig[uiKey] ?? { view: null, selection: null, tag: null, hits: [] };
   const defaultView = useMemo(
     () => (!record?.seq ? { start: 0, end: 0 } : { start: 0, end: Math.min(record.seq.length, 16000) }),
-    [record?.seq]
+    [record]
   );
   const view = curUi.view ?? defaultView;
   // Stable updater so child components can hold it in effects safely.
@@ -202,7 +183,7 @@ export default function ExplorerSection({ explainMode }) {
         const text = String(reader.result);
         const existingRecords = upload?.records?.length
           ? upload.records
-          : (sessionReady && session?.records?.length ? session.records : []);
+          : [];
 
         const fallbackId = existingRecords[0]?.id ?? "sequence";
 
@@ -292,19 +273,15 @@ export default function ExplorerSection({ explainMode }) {
         subtitle="Interactive browser over your contigs: features, GC content/skew, IUPAC motif search, sequence extraction - runs entirely in your browser" />
 
       <LimitBanner>
-        A lightweight Artemis-style viewer, not a database browser: it shows whatever you load - this pipeline's
-        assembled/annotated contigs, your own FASTA plus GFF3, or a self-contained GenBank file. No remote genomes,
-        no BLAST, no variant overlays; products are exactly what the annotation carried.
+        A lightweight Artemis-style viewer, not a database browser: it shows whatever you load - your own
+        FASTA plus GFF3, or a self-contained GenBank file. No remote genomes, no BLAST, no variant overlays;
+        products are exactly what the annotation carried.
       </LimitBanner>
 
       {/* ------------------------- INPUT ------------------------- */}
       <Panel style={{ padding: 18, marginTop: 16, marginBottom: 16 }}>
         <Eyebrow color={C.raw}>Load a genome</Eyebrow>
         <div style={{ display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
-          <SrcCard title="This session's assembly + annotation" color={C.assembly}
-            enabled={sessionReady && !!session}
-            sub={session ? `${session.records.length} contig(s) · ${(session.numFeatures ?? 0).toLocaleString()} annotated CDS` : "run Assembly (and optionally Annotation) first"}
-            onClick={() => { setSource("session"); setContigIdx(0); }} />
           <SrcCard title="Uploaded files" color={C.raw}
             enabled={!!upload}
             sub={upload ? `${upload.name} — ${upload.records.length} record(s), ${[...upload.featuresByContig.values()].reduce((a, v) => a + v.length, 0)} features` : "FASTA / GenBank (.gbk,.gbff) + optional GFF3"}

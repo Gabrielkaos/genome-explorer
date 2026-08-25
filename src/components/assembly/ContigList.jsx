@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Download, RotateCcw } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow } from "../ui/Primitives.jsx";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Copy } from "lucide-react";
 import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow } from "../ui/Primitives.jsx";

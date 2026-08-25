@@ -119,7 +119,7 @@ export function fisherExactTwoSided(a, b, c, d) {
   const r1 = a + b, r2 = c + d, c1 = a + c, c2 = b + d, n = a + b + c + d;
   if (r1 === 0 || r2 === 0 || c1 === 0 || c2 === 0) return 1; // degenerate margins
 
-  const kLo = Math.max(0, r1 - r2), kHi = Math.min(r1, c1);
+  const kLo = Math.max(0, r1 - c2), kHi = Math.min(r1, c1);
   if (kHi < kLo) return 1;
 
   const pObs = hyperLogP(a, r1, c1, c2, n);

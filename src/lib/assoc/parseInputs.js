@@ -130,16 +130,19 @@ export function parsePhenotypes(text) {
   for (let c = 0; c < nCols; c++) {
     const rawVals = rows.map((r) => (r[c] ?? "").replace(/^"|"$/g, "")).filter((v) => v !== "");
     const numericVals = rawVals.map((v) => Number(v)).filter(Number.isFinite);
+    const uniq = [...new Set(rawVals)];
     let kind, values;
-    if (rawVals.length >= 2 && numericVals.length === rawVals.length) {
+    if (uniq.length === 2) {
+      kind = "binary";
+      values = rows.map((r) => (r[c] ?? "").replace(/^"|"$/g, ""));
+    } else if (rawVals.length >= 2 && numericVals.length === rawVals.length) {
       kind = "numeric";
       values = rows.map((r) => {
         const v = Number((r[c] ?? "").replace(/^"|"$/g, ""));
         return Number.isFinite(v) ? v : null;
       });
     } else {
-      const uniq = [...new Set(rawVals)];
-      kind = uniq.length === 2 ? "binary" : uniq.length < 2 ? "constant" : "text";
+      kind = uniq.length < 2 ? "constant" : "text";
       values = rows.map((r) => (r[c] ?? "").replace(/^"|"$/g, ""));
     }
     cols.push({ name: header[c], kind, values });

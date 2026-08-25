@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useState } from "react";
 import { useFastqParser } from "../hooks/useFastqParser.js";
 import { useAssembly } from "../hooks/useAssembly.js";
