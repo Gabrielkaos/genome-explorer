@@ -18,8 +18,10 @@ export default function FeatureInspector({ contig, feature, selection }) {
   const data = useMemo(() => {
     if (!feature) return null;
     const sub = seq.slice(feature.start, feature.end);
+    const isPlaceholder = /^N+$/i.test(sub) || sub.length === 0 || !!contig.placeholderSeq;
     const featSeq = feature.strand === "-" ? revcomp(sub) : sub;
     const gc = (() => {
+      if (isPlaceholder) return null;
       let n = 0;
       for (const b of sub) if (b === "G" || b === "C") n++;
       return sub.length ? n / sub.length : 0;
@@ -28,10 +30,11 @@ export default function FeatureInspector({ contig, feature, selection }) {
       ...feature,
       lengthNt: sub.length,
       gc,
-      dna: featSeq,
-      protein: feature.type === "CDS" && featSeq.length >= 3 ? translate(featSeq) : null,
+      isPlaceholder,
+      dna: isPlaceholder ? null : featSeq,
+      protein: (!isPlaceholder && feature.type === "CDS" && featSeq.length >= 3) ? translate(featSeq) : null,
     };
-  }, [seq, feature]);
+  }, [seq, feature, contig.placeholderSeq]);
 
   const selData = useMemo(() => {
     if (selection && selection.end - selection.start0 > 0) {
@@ -81,21 +84,29 @@ export default function FeatureInspector({ contig, feature, selection }) {
           <Row k="Contig" v={`${data.contigId}`} />
           <Row k="Coordinates" v={`${(data.start + 1).toLocaleString()} – ${data.end.toLocaleString()} (${data.strand === "-" ? "reverse" : "forward"} strand)`} />
           <Row k="Length" v={`${data.lengthNt.toLocaleString()} nt${data.protein ? ` · ${data.protein.length.toLocaleString()} aa` : ""}`} />
-          <Row k="GC content" v={`${(data.gc * 100).toFixed(1)}%`} />
+          <Row k="GC content" v={data.gc !== null ? `${(data.gc * 100).toFixed(1)}%` : "— (requires FASTA)"} />
 
-          {data.protein && (
+          {data.isPlaceholder ? (
+            <div style={{ marginTop: 12, padding: "8px 10px", background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, fontSize: 11, color: C.textFaint, fontStyle: "italic" }}>
+              Sequence not in GFF3. Upload FASTA to inspect nucleotides & translation.
+            </div>
+          ) : (
             <>
-              <SubHead>Translation</SubHead>
-              <MonoBlock text={wrap(data.protein)} />
+              {data.protein && (
+                <>
+                  <SubHead>Translation</SubHead>
+                  <MonoBlock text={wrap(data.protein)} />
+                </>
+              )}
+              <SubHead>Nucleotide ({data.strand === "-" ? "reverse complement" : "forward"})</SubHead>
+              <MonoBlock text={wrap(data.dna.slice(0, 900)) + (data.dna.length > 900 ? "\n…" : "")} />
+
+              <Actions
+                onCopy={() => copy(data.protein ? `>${data.locusTag}\n${wrap(data.protein)}` : `>${data.locusTag}\n${wrap(data.dna)}`)}
+                onDownload={downloadRegion}
+              />
             </>
           )}
-          <SubHead>Nucleotide ({data.strand === "-" ? "reverse complement" : "forward"})</SubHead>
-          <MonoBlock text={wrap(data.dna.slice(0, 900)) + (data.dna.length > 900 ? "\n…" : "")} />
-
-          <Actions
-            onCopy={() => copy(data.protein ? `>${data.locusTag}\n${wrap(data.protein)}` : `>${data.locusTag}\n${wrap(data.dna)}`)}
-            onDownload={downloadRegion}
-          />
         </>
       )}
     </Panel>
@@ -122,9 +133,9 @@ function SubHead({ children }) {
 function MonoBlock({ text }) {
   return (
     <div style={{
-      background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6, padding: "8px 10px",
+      background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, padding: "8px 10px",
       fontFamily: FONT_DISPLAY, fontSize: 11, color: C.raw, whiteSpace: "pre-wrap", wordBreak: "break-all",
-      maxHeight: 130, overflowY: "auto", lineHeight: 1.5,
+      maxHeight: 130, overflowY: "auto", lineHeight: 1.5, textShadow: `0 0 6px ${C.raw}33`,
     }}>{text}</div>
   );
 }
@@ -132,8 +143,8 @@ function MonoBlock({ text }) {
 function Actions({ onCopy, onDownload }) {
   return (
     <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-      <MiniBtn onClick={onCopy}><Copy size={11} /> Copy FASTA</MiniBtn>
-      <MiniBtn onClick={onDownload}><Download size={11} /> Download FASTA</MiniBtn>
+      <MiniBtn onClick={onCopy}><Copy size={11} /> [ copy_fasta ]</MiniBtn>
+      <MiniBtn onClick={onDownload}><Download size={11} /> [ download_fasta ]</MiniBtn>
     </div>
   );
 }
@@ -142,7 +153,9 @@ function MiniBtn({ children, onClick }) {
   return (
     <button onClick={onClick} style={{
       all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5,
-      fontSize: 11.5, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 10px",
+      fontSize: 11.5, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 2, padding: "5px 10px",
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      background: "#05070a",
     }}>{children}</button>
   );
 }

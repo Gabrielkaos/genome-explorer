@@ -392,7 +392,7 @@ export default function GenomeCanvas({
           viewing {(view.start + 1).toLocaleString()}–{view.end.toLocaleString()} ({Math.round(view.end - view.start).toLocaleString()} bp)
         </span>
       </div>
-      <div ref={wrapRef} style={{ border: `1px solid ${C.border}`, borderRadius: 8, overflow: "hidden", background: "#05070a" }}>
+      <div ref={wrapRef} style={{ border: `1px solid ${C.border}`, borderRadius: 2, overflow: "hidden", background: "#05070a" }}>
         <canvas
           ref={canvasRef}
           style={{ display: "block", cursor: mode === "pan" ? "grab" : "crosshair" }}
@@ -416,11 +416,11 @@ export default function GenomeCanvas({
       </div>
       {stats && (
         <div style={{
-          marginTop: 8, padding: "8px 12px", borderRadius: 8, background: "rgba(232,193,90,0.09)",
+          marginTop: 8, padding: "8px 12px", borderRadius: 2, background: "#0c1018",
           border: "1px solid rgba(232,193,90,0.35)", fontFamily: FONT_DISPLAY, fontSize: 12, color: C.text,
           display: "flex", gap: 18, flexWrap: "wrap",
         }}>
-          <strong style={{ color: C.qc }}>Selected region</strong>
+          <strong style={{ color: C.qc, textShadow: `0 0 6px ${C.qc}44` }}>Selected region</strong>
           <span>{stats.lenBp.toLocaleString()} bp</span>
           <span>GC {(stats.gc * 100).toFixed(1)}%</span>
           <span>{stats.nf} feature(s)</span>

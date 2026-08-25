@@ -96,7 +96,7 @@ function VolcanoTip({ active, payload, fdr }) {
         OR {Number.isFinite(r.or) ? r.or.toFixed(2) : "∞"} [{Number.isFinite(r.lo) ? r.lo.toFixed(2) : "-"}, {Number.isFinite(r.hi) ? r.hi.toFixed(2) : "-"}]<br />
         p = {fmtP(r._p)} · q = {qTxt}
         {r.strataUsed > 0 && <> · CMH p = {fmtP(r.cmhP)}</>}
-        {Number.isFinite(r.q) && r.q <= fdr && <span style={{ color: C.pheno }}> · significant</span>}
+        {Number.isFinite(r.q) && r.q <= fdr && <span style={{ color: C.pheno, textShadow: `0 0 6px ${C.pheno}44` }}> · significant</span>}
       </div>
     </div>
   );

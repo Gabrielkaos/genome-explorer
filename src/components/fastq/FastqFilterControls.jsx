@@ -62,7 +62,7 @@ export default function FastqFilterControls({
           Max length (optional)
           <input type="number" placeholder="none" value={maxLength || ""}
             onChange={(e) => setMaxLength(e.target.value ? +e.target.value : null)}
-            style={{ width: 90, background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6, color: C.text, padding: "4px 8px", fontFamily: FONT_DISPLAY, fontSize: 12 }} />
+            style={{ width: 90, background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, color: C.text, padding: "4px 8px", fontFamily: FONT_DISPLAY, fontSize: 12 }} />
         </label>
 
         <div style={{ marginLeft: "auto", fontSize: 13, color: C.text }}>
@@ -73,11 +73,12 @@ export default function FastqFilterControls({
         <button onClick={handleExport} disabled={exporting || !dataset}
           style={{
             all: "unset", cursor: exporting ? "default" : "pointer", display: "flex", alignItems: "center", gap: 6,
-            fontSize: 12.5, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 6, padding: "7px 13px",
+            fontSize: 12.5, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 2, padding: "7px 13px",
+            fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
             opacity: exporting ? 0.6 : 1,
           }}>
           {exporting ? <Loader2 size={13} className="spin" /> : <Download size={13} />}
-          Export filtered FASTQ
+          [ export_filtered_fastq ]
         </button>
       </div>
 

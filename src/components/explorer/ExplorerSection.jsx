@@ -32,12 +32,31 @@ function parseFastaText(text) {
   return records.filter((r) => r.seq.length > 0);
 }
 
+function synthesizeContigRecords(featuresByContig, sequenceRegions = new Map()) {
+  const records = [];
+  const contigIds = new Set([...sequenceRegions.keys(), ...featuresByContig.keys()]);
+  for (const id of contigIds) {
+    const reg = sequenceRegions.get(id);
+    const feats = featuresByContig.get(id) ?? [];
+    const maxEnd = feats.reduce((m, f) => Math.max(m, f.end), 0);
+    const len = reg?.length ?? Math.max(maxEnd, 1000);
+    records.push({
+      id,
+      desc: `${id} (from GFF3 annotations)`,
+      seq: "N".repeat(len),
+      circular: reg?.circular ?? false,
+      placeholderSeq: true,
+    });
+  }
+  return records.length ? records : [{ id: "sequence", desc: "sequence", seq: "N".repeat(1000), circular: false, placeholderSeq: true }];
+}
+
 export default function ExplorerSection({ explainMode }) {
   const { asm, ann } = useFastqData();
 
   const sessionReady = asm.status === "done" && asm.contigs?.length > 0;
   const [source, setSource] = useState(sessionReady ? "session" : "example"); // session | upload | example
-  const [upload, setUpload] = useState(null);      // {records:[{id,desc,seq,circular}], featuresByContig, names}
+  const [upload, setUpload] = useState(null);      // {records:[{id,desc,seq,circular}], featuresByContig, name, placeholderSeq}
   const [contigIdx, setContigIdx] = useState(0);
   const [mode, setMode] = useState("pan");         // pan | select
   const [parseError, setParseError] = useState("");
@@ -73,22 +92,33 @@ export default function ExplorerSection({ explainMode }) {
   }, [asm.contigs, ann.genes, sessionReady]);
 
   const active = source === "session" ? (session ?? example) : source === "upload" ? (upload ?? example) : example;
-  const record = active.records[Math.min(contigIdx, active.records.length - 1)];
+  const record = active.records && active.records.length > 0
+    ? active.records[Math.min(Math.max(0, contigIdx), active.records.length - 1)]
+    : null;
 
-  const features = useMemo(() => (
-    (active.featuresByContig.get(record.id) ?? []).slice().sort((a, b) => a.start - b.start || (TYPE_ORDER[a.type] ?? 9) - (TYPE_ORDER[b.type] ?? 9))
-  ), [active, record.id]);
+  const features = useMemo(() => {
+    if (!record || !active.featuresByContig) return [];
+    return (active.featuresByContig.get(record.id) ?? []).slice().sort(
+      (a, b) => a.start - b.start || (TYPE_ORDER[a.type] ?? 9) - (TYPE_ORDER[b.type] ?? 9)
+    );
+  }, [active, record]);
 
-  const tracks = useMemo(() => buildTracks(record.seq), [record.seq]);
-  const oriPos = useMemo(() => (record.circular ? skewExtrema(tracks)?.originPos : undefined), [record.circular, tracks]);
+  const tracks = useMemo(
+    () => (!record?.seq ? { window: 100, step: 50, starts: [], gc: [], skew: [] } : buildTracks(record.seq)),
+    [record?.seq]
+  );
+  const oriPos = useMemo(
+    () => (record?.circular ? skewExtrema(tracks)?.originPos : undefined),
+    [record?.circular, tracks]
+  );
 
   // Per-contig UI state, keyed by contig+source so switching data resets it
   // during render (no effect needed).
-  const uiKey = `${source}:${record.id}`;
+  const uiKey = record ? `${source}:${record.id}` : `${source}:none`;
   const curUi = uiByContig[uiKey] ?? { view: null, selection: null, tag: null, hits: [] };
   const defaultView = useMemo(
-    () => ({ start: 0, end: Math.min(record.seq.length, 16000) }),
-    [record.seq.length]
+    () => (!record?.seq ? { start: 0, end: 0 } : { start: 0, end: Math.min(record.seq.length, 16000) }),
+    [record?.seq]
   );
   const view = curUi.view ?? defaultView;
   // Stable updater so child components can hold it in effects safely.
@@ -121,12 +151,38 @@ export default function ExplorerSection({ explainMode }) {
         let parsed;
         if (/^\s*LOCUS\s/m.test(text)) {
           const gb = parseGenbank(text);
-          parsed = { records: gb.records.map((r) => ({ ...r, circular: /circular/i.test(text.slice(0, 400)) })), featuresByContig: gb.featuresByContig, name: file.name };
+          parsed = {
+            records: gb.records.map((r) => ({ ...r, circular: /circular/i.test(text.slice(0, 400)) })),
+            featuresByContig: gb.featuresByContig,
+            name: file.name,
+            placeholderSeq: false,
+          };
           if (!parsed.records.some((r) => r.seq.length)) throw new Error("GenBank file carries no ORIGIN sequence.");
+        } else if (/^\s*##gff-version/m.test(text) || (text.includes("\t") && /\t(CDS|gene|rRNA|tRNA|exon|region)\t/i.test(text))) {
+          // GFF3 / GTF uploaded via genome button
+          const gff = parseGff3(text, "sequence");
+          let records = gff.records;
+          let placeholderSeq = false;
+          if (!records.length) {
+            records = synthesizeContigRecords(gff.featuresByContig, gff.sequenceRegions);
+            placeholderSeq = true;
+          }
+          parsed = {
+            records,
+            featuresByContig: gff.featuresByContig,
+            name: file.name,
+            placeholderSeq,
+          };
         } else {
           const recs = parseFastaText(text);
           if (!recs.length) throw new Error("No sequences found.");
-          parsed = { records: recs.map((r) => ({ id: r.id, desc: r.desc ?? r.id, seq: r.seq.toUpperCase().replace(/[^ACGTN]/gi, "N"), circular: false })), featuresByContig: new Map(), name: file.name };
+          const baseFeatures = upload?.featuresByContig ?? new Map();
+          parsed = {
+            records: recs.map((r) => ({ id: r.id, desc: r.desc ?? r.id, seq: r.seq.toUpperCase().replace(/[^ACGTN]/gi, "N"), circular: false })),
+            featuresByContig: baseFeatures,
+            name: file.name,
+            placeholderSeq: false,
+          };
         }
         setUpload(parsed);
         setSource("upload");
@@ -144,16 +200,68 @@ export default function ExplorerSection({ explainMode }) {
     reader.onload = () => {
       try {
         const text = String(reader.result);
-        const base = upload ?? { records: [], featuresByContig: new Map(), name: "" };
+        const existingRecords = upload?.records?.length
+          ? upload.records
+          : (sessionReady && session?.records?.length ? session.records : []);
+
+        const fallbackId = existingRecords[0]?.id ?? "sequence";
+
         if (/^\s*LOCUS\s/m.test(text)) {
           const gb = parseGenbank(text);
-          const merged = new Map(base.featuresByContig);
+          const records = gb.records.length ? gb.records : existingRecords;
+          const merged = new Map(upload?.featuresByContig ?? new Map());
           for (const [k, v] of gb.featuresByContig) merged.set(k, v);
-          setUpload({ ...base, featuresByContig: merged });
+          setUpload({
+            records: records.length ? records : synthesizeContigRecords(merged),
+            featuresByContig: merged,
+            name: upload?.name ? `${upload.name} + ${file.name}` : file.name,
+            placeholderSeq: records.length === 0,
+          });
         } else {
-          const gff = parseGff3(text, base.records[0]?.id ?? "sequence");
-          if (!gff.numFeatures) throw new Error("No usable features found in this GFF.");
-          setUpload({ ...base, featuresByContig: gff.featuresByContig });
+          const gff = parseGff3(text, fallbackId);
+          if (!gff.numFeatures) throw new Error("No usable features found in this GFF / annotation file.");
+
+          let records = [];
+          let placeholderSeq = false;
+
+          if (gff.records.length > 0) {
+            records = gff.records;
+          } else if (existingRecords.length > 0) {
+            records = existingRecords.slice();
+            // Synthesize any contigs from GFF that are not in existingRecords
+            for (const seqid of gff.featuresByContig.keys()) {
+              if (!records.some((r) => r.id === seqid)) {
+                const len = gff.sequenceRegions.get(seqid)?.length ?? Math.max(...(gff.featuresByContig.get(seqid) ?? []).map((f) => f.end), 1000);
+                records.push({
+                  id: seqid,
+                  desc: `${seqid} (from GFF3 annotations)`,
+                  seq: "N".repeat(len),
+                  circular: gff.sequenceRegions.get(seqid)?.circular ?? false,
+                  placeholderSeq: true,
+                });
+              }
+            }
+          } else {
+            records = synthesizeContigRecords(gff.featuresByContig, gff.sequenceRegions);
+            placeholderSeq = true;
+          }
+
+          // Remap single contig if FASTA has 1 record and GFF has 1 contig with different name
+          if (records.length === 1 && gff.featuresByContig.size === 1 && !gff.featuresByContig.has(records[0].id)) {
+            const onlyGffSeqId = [...gff.featuresByContig.keys()][0];
+            const remappedFeatures = (gff.featuresByContig.get(onlyGffSeqId) ?? []).map((f) => ({
+              ...f,
+              contigId: records[0].id,
+            }));
+            gff.featuresByContig.set(records[0].id, remappedFeatures);
+          }
+
+          setUpload({
+            records,
+            featuresByContig: gff.featuresByContig,
+            name: upload?.name ? `${upload.name} + ${file.name}` : file.name,
+            placeholderSeq,
+          });
         }
         setSource("upload");
         setContigIdx(0);
@@ -207,9 +315,9 @@ export default function ExplorerSection({ explainMode }) {
         </div>
 
         <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={() => genomeRef.current.click()} style={upBtn}><Upload size={12} /> Genome FASTA / GenBank</button>
+          <button onClick={() => genomeRef.current.click()} style={upBtn}><Upload size={12} /> [ upload_fasta_gbk ]</button>
           <input ref={genomeRef} type="file" accept=".fasta,.fa,.fna,.fas,.gbk,.gbff,.gb,.genbank,.ffn,.txt" hidden onChange={(e) => e.target.files[0] && handleGenomeFile(e.target.files[0])} />
-          <button onClick={() => annotRef.current.click()} style={upBtn}><Upload size={12} /> Annotations GFF3</button>
+          <button onClick={() => annotRef.current.click()} style={upBtn}><Upload size={12} /> [ upload_gff3 ]</button>
           <input ref={annotRef} type="file" accept=".gff,.gff3,.txt" hidden onChange={(e) => e.target.files[0] && handleAnnotFile(e.target.files[0])} />
           <span style={{ fontSize: 11, color: C.textFaint }}>GFF seqids must match FASTA headers; GenBank needs its ORIGIN.</span>
         </div>
@@ -220,8 +328,22 @@ export default function ExplorerSection({ explainMode }) {
       </Panel>
 
       {/* ------------------------- BROWSER ------------------------- */}
-      {view && (
+      {view && record && (
         <>
+          {record.placeholderSeq && (
+            <div style={{
+              padding: "9px 13px", marginBottom: 12, borderRadius: 2,
+              background: "#0c131d", border: `1px solid ${C.raw}66`,
+              color: C.raw, fontSize: 12, display: "flex", alignItems: "center", gap: 10,
+              fontFamily: FONT_DISPLAY,
+            }}>
+              <span style={{ fontSize: 14 }}>ℹ</span>
+              <span>
+                <strong>GFF3 annotations loaded without sequence.</strong> Feature map, coordinates, and search are active. Upload your genome FASTA to enable GC curves, skew, and base-level sequence.
+              </span>
+            </div>
+          )}
+
           <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {active.records.map((r, i) => (
@@ -310,19 +432,20 @@ export default function ExplorerSection({ explainMode }) {
 
 const upBtn = {
   all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5,
-  padding: "6px 11px", borderRadius: 6, border: `1px solid ${C.border}`, color: C.textDim, fontSize: 12,
+  padding: "6px 11px", borderRadius: 2, border: `1px solid ${C.border}`, color: C.textDim, fontSize: 12,
+  fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+  background: "#05070a",
 };
 
 function SrcCard({ title, sub, enabled, onClick, color }) {
   return (
     <button onClick={() => enabled && onClick()} style={{
-      all: "unset", cursor: enabled ? "pointer" : "default", flex: "1 1 220px", padding: "12px 14px", borderRadius: 8,
-      background: "#05070a", border: `1px solid ${enabled ? C.border : C.border}`,
+      all: "unset", cursor: enabled ? "pointer" : "default", flex: "1 1 220px", padding: "12px 14px", borderRadius: 2,
+      background: "#05070a", border: `1px solid ${C.border}`,
       opacity: enabled ? 1 : 0.5,
     }}>
-      <div style={{ fontSize: 12.5, color: C.text }}>{title}</div>
-      <div style={{ fontSize: 11, color: C.textFaint, marginTop: 3 }}>{sub}</div>
-      <span style={{ display: "none" }}>{color}</span>
+      <div style={{ fontSize: 12.5, color: enabled ? (color || C.text) : C.textDim, fontFamily: FONT_DISPLAY, textShadow: enabled && color ? `0 0 6px ${color}33` : "none" }}>{title}</div>
+      <div style={{ fontSize: 11, color: C.textFaint, marginTop: 3, fontFamily: FONT_DISPLAY }}>{sub}</div>
     </button>
   );
 }
@@ -330,10 +453,12 @@ function SrcCard({ title, sub, enabled, onClick, color }) {
 function Chip({ children, active, onClick }) {
   return (
     <button onClick={onClick} style={{
-      all: "unset", cursor: "pointer", fontSize: 11.5, padding: "4px 10px", borderRadius: 6,
-      background: active ? `${C.raw}22` : "transparent",
+      all: "unset", cursor: "pointer", fontSize: 11.5, padding: "4px 10px", borderRadius: 2,
+      background: active ? `${C.raw}22` : "#05070a",
       border: `1px solid ${active ? C.raw : C.border}`,
       color: active ? C.raw : C.textDim,
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      textShadow: active ? `0 0 6px ${C.raw}44` : "none",
     }}>{children}</button>
   );
 }
@@ -341,8 +466,8 @@ function Chip({ children, active, onClick }) {
 function IconBtn({ children, onClick, title }) {
   return (
     <button onClick={onClick} title={title} style={{
-      all: "unset", cursor: "pointer", display: "inline-flex", padding: 5, borderRadius: 6,
-      border: `1px solid ${C.border}`, color: C.textDim,
+      all: "unset", cursor: "pointer", display: "inline-flex", padding: 5, borderRadius: 2,
+      border: `1px solid ${C.border}`, color: C.textDim, background: "#05070a",
     }}>{children}</button>
   );
 }
@@ -359,9 +484,11 @@ function ExpBtn({ label, onClick }) {
   return (
     <button onClick={onClick} style={{
       all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5,
-      fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 6, padding: "6px 12px",
+      fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 2, padding: "6px 12px",
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      textShadow: `0 0 6px ${C.good}44`,
     }}>
-      <FileText size={12} /> {label}
+      <FileText size={12} /> [ {label} ]
     </button>
   );
 }
@@ -384,20 +511,20 @@ function FeatureList({ features, selectedTag, onSelect }) {
         <Eyebrow color={C.annotation}>Features ({features.length.toLocaleString()})</Eyebrow>
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="filter…" spellCheck={false}
           style={{
-            width: 150, background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6,
+            width: 150, background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2,
             padding: "4px 9px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 11.5,
           }} />
       </div>
       <div style={{ maxHeight: 430, overflowY: "auto" }}>
         <table style={{ borderCollapse: "collapse", width: "100%", fontFamily: FONT_DISPLAY, fontSize: 11.5 }}>
           <tbody>
-            {shown.map((f) => (
-              <tr key={f.locusTag} onClick={() => onSelect(f.locusTag)}
+            {shown.map((f, i) => (
+              <tr key={`${f.locusTag}_${f.start}_${f.end}_${i}`} onClick={() => onSelect(f.locusTag)}
                 style={{ cursor: "pointer", borderBottom: `1px solid ${C.border}`,
                   background: selectedTag === f.locusTag ? `${C.raw}18` : "transparent" }}>
                 <td style={{ padding: "4px 8px", whiteSpace: "nowrap" }}>
                   <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: 2, background: TYPE_COLORS[f.type] ?? "#93a0ae", marginRight: 6 }} />
-                  <span style={{ color: selectedTag === f.locusTag ? C.raw : C.text }}>{f.locusTag}</span>
+                  <span style={{ color: selectedTag === f.locusTag ? C.raw : C.text, textShadow: selectedTag === f.locusTag ? `0 0 6px ${C.raw}44` : "none" }}>{f.locusTag}</span>
                 </td>
                 <td style={{ padding: "4px 8px", color: C.textDim, textAlign: "right", whiteSpace: "nowrap" }}>
                   {(f.start + 1).toLocaleString()}–{f.end.toLocaleString()}<span style={{ color: f.strand === "+" ? C.good : C.bad }}>{f.strand === "+" ? " →" : " ←"}</span>

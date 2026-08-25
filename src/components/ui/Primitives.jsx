@@ -1,29 +1,47 @@
-import React from "react";
-import { Sparkles, AlertTriangle } from "lucide-react";
-import { C, FONT_DISPLAY, FONT_HEAD } from "../../theme.js";
+import { C, FONT } from "../../theme.js";
 
-export function Panel({ children, style, className = "" }) {
+export function Panel({ children, style, className = "", title }) {
   return (
     <div
-      className={className}
+      className={`scanlines ${className}`}
       style={{
-        background: `linear-gradient(180deg, ${C.bgPanel2}, ${C.bgPanel})`,
-        border: `1px solid ${C.border}`, borderRadius: 12,
-        backdropFilter: "blur(14px)",
-        boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 28px -16px rgba(0,0,0,0.6)",
+        background: C.bgPanel,
+        border: `1px solid ${C.border}`,
+        borderRadius: 2,
+        position: "relative",
+        overflow: "hidden",
         ...style,
       }}
-    >{children}</div>
+    >
+      {title && (
+        <div style={{
+          padding: "4px 10px",
+          borderBottom: `1px solid ${C.border}`,
+          fontSize: 11,
+          color: C.prompt,
+          fontFamily: FONT,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          background: "#0a0e16",
+        }}>
+          <span style={{ color: C.textFaint }}>$</span> {title}
+          <span className="cursor-blink" />
+        </div>
+      )}
+      {children}
+    </div>
   );
 }
 
 export function Eyebrow({ color, children }) {
   return (
     <div style={{
-      fontFamily: FONT_DISPLAY, fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase",
-      color, display: "flex", alignItems: "center", gap: 8, marginBottom: 6,
+      fontFamily: FONT, fontSize: 11, letterSpacing: "0.06em",
+      textTransform: "uppercase", color,
+      display: "flex", alignItems: "center", gap: 6, marginBottom: 6,
     }}>
-      <span style={{ width: 6, height: 6, borderRadius: 999, background: color, boxShadow: `0 0 8px ${color}` }} />
+      <span style={{ color: C.textFaint }}>›</span>
       {children}
     </div>
   );
@@ -31,10 +49,23 @@ export function Eyebrow({ color, children }) {
 
 export function StatCard({ label, value, color, unit }) {
   return (
-    <div style={{ background: C.bgPanel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 14px", minWidth: 108 }}>
-      <div style={{ fontSize: 10.5, color: C.textFaint, textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
-      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 20, color: color || C.text, marginTop: 3 }}>
-        {value}<span style={{ fontSize: 11, color: C.textDim, marginLeft: 3 }}>{unit}</span>
+    <div style={{
+      background: C.bgPanel,
+      border: `1px solid ${C.border}`,
+      borderRadius: 2,
+      padding: "8px 12px",
+      minWidth: 100,
+    }}>
+      <div style={{
+        fontSize: 10, color: C.textFaint,
+        textTransform: "uppercase", letterSpacing: "0.08em",
+        fontFamily: FONT,
+      }}>{label}</div>
+      <div style={{
+        fontFamily: FONT, fontSize: 18, color: color || C.text,
+        marginTop: 2, textShadow: color ? `0 0 8px ${color}44` : "none",
+      }}>
+        {value}<span style={{ fontSize: 10, color: C.textDim, marginLeft: 3 }}>{unit}</span>
       </div>
     </div>
   );
@@ -44,12 +75,13 @@ export function ExplainBox({ explainMode, color, children }) {
   if (!explainMode) return null;
   return (
     <div style={{
-      marginTop: 10, padding: "10px 12px", borderRadius: 8, fontSize: 13, lineHeight: 1.5,
-      background: `${color}14`, border: `1px solid ${color}44`, color: C.text,
-      display: "flex", gap: 8, alignItems: "flex-start",
+      marginTop: 10, padding: "8px 12px", borderRadius: 2,
+      fontSize: 12, lineHeight: 1.55, fontFamily: FONT,
+      background: `${color}08`, borderLeft: `2px solid ${color}`,
+      color: C.text,
     }}>
-      <Sparkles size={14} color={color} style={{ marginTop: 2, flexShrink: 0 }} />
-      <span>{children}</span>
+      <span style={{ color, marginRight: 6 }}>#</span>
+      {children}
     </div>
   );
 }
@@ -57,31 +89,42 @@ export function ExplainBox({ explainMode, color, children }) {
 export function LimitBanner({ children }) {
   return (
     <div style={{
-      marginTop: 14, padding: "10px 12px", borderRadius: 8, fontSize: 12.5, lineHeight: 1.5,
-      background: "rgba(230,104,95,0.08)", border: "1px solid rgba(230,104,95,0.3)", color: "#f2b3ad",
-      display: "flex", gap: 8, alignItems: "flex-start",
+      marginTop: 12, padding: "8px 12px", borderRadius: 2,
+      fontSize: 11.5, lineHeight: 1.5, fontFamily: FONT,
+      background: "rgba(230,104,95,0.06)",
+      borderLeft: "2px solid rgba(230,104,95,0.6)",
+      color: "#f2b3ad",
     }}>
-      <AlertTriangle size={14} style={{ marginTop: 2, flexShrink: 0, color: C.bad }} />
-      <span>{children}</span>
+      <span style={{ color: C.bad, marginRight: 6 }}>⚠</span>
+      {children}
     </div>
   );
 }
 
 export function SectionTitle({ icon: Icon, color, title, subtitle }) {
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 18 }}>
+    <div style={{ marginBottom: 16 }}>
       <div style={{
-        width: 38, height: 38, borderRadius: 9, background: `${color}1c`, border: `1px solid ${color}55`,
-        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        fontFamily: FONT, fontSize: 13.5, color,
+        display: "flex", alignItems: "center", gap: 8,
+        textShadow: `0 0 10px ${color}33`,
       }}>
-        <Icon size={18} color={color} />
+        <span style={{ color: C.prompt }}>genome@explorer:~$</span>
+        <Icon size={14} color={color} />
+        {title.toLowerCase().replace(/\s+/g, '_')}
       </div>
-      <div>
-        <div style={{ fontFamily: FONT_HEAD, fontWeight: 600, fontSize: 20, color: C.text, letterSpacing: "-0.01em" }}>{title}</div>
-        <div style={{ fontSize: 13, color: C.textDim, marginTop: 2 }}>{subtitle}</div>
-      </div>
+      {subtitle && (
+        <div style={{
+          fontSize: 11.5, color: C.textFaint, marginTop: 3,
+          paddingLeft: 24, fontFamily: FONT,
+          borderLeft: `1px solid ${C.border}`,
+          marginLeft: 8,
+        }}>
+          # {subtitle}
+        </div>
+      )}
     </div>
   );
 }
 
-export const tooltipStyle = { background: "#0e131a", border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 12, color: C.text };
+export const tooltipStyle = { background: "#0a0e16", border: `1px solid ${C.border}`, borderRadius: 2, fontSize: 11, color: C.text, fontFamily: FONT };

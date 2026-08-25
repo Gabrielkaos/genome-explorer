@@ -1,13 +1,13 @@
 export const C = {
   bg: "#080b10",
-  bgPanel: "rgba(255,255,255,0.035)",
-  bgPanel2: "rgba(255,255,255,0.055)",
-  border: "rgba(255,255,255,0.09)",
-  borderStrong: "rgba(255,255,255,0.18)",
+  bgPanel: "#0c1018",
+  bgPanel2: "#0e1320",
+  border: "#1a2332",
+  borderStrong: "#2a3a4a",
   text: "#e7edf3",
   textDim: "#93a0ae",
   textFaint: "#5c6773",
-  raw: "#5ec8d8",
+  raw: "#00ff41",
   qc: "#e8c15a",
   assembly: "#a08cf0",
   annotation: "#ef7fa3",
@@ -15,9 +15,12 @@ export const C = {
   pheno: "#ef8a5c",
   good: "#68c98f",
   bad: "#e6685f",
+  prompt: "#00ff41",
+  cursor: "#00ff41",
 };
 
-export const FONT_DISPLAY = "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace";
-export const FONT_HEAD = "'Space Grotesk', -apple-system, 'Segoe UI', sans-serif";
-export const FONT_BODY = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-export const FONT_IMPORT = "@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');";
+export const FONT = "'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace";
+export const FONT_DISPLAY = FONT;
+export const FONT_HEAD = FONT;
+export const FONT_BODY = FONT;
+export const FONT_IMPORT = "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');";

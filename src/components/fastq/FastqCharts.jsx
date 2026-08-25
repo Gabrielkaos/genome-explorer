@@ -41,7 +41,7 @@ export default function FastqCharts({ dataset, index, qualityThreshold, minLengt
           <XAxis dataKey="label" tick={{ fill: C.textFaint, fontSize: 10 }} />
           <YAxis tick={{ fill: C.textFaint, fontSize: 10 }} />
           <Tooltip contentStyle={tooltipStyle} formatter={(v, n, p) => [v, `${p.payload.rangeStart}-${p.payload.rangeEnd} bp`]} />
-          <Bar dataKey="count" fill={C.qc} radius={[3, 3, 0, 0]} />
+          <Bar dataKey="count" fill={C.qc} radius={[2, 2, 0, 0]} />
         </BarChart>
       </ChartPanel>
 
@@ -51,7 +51,7 @@ export default function FastqCharts({ dataset, index, qualityThreshold, minLengt
           <XAxis dataKey="label" tick={{ fill: C.textFaint, fontSize: 10 }} label={{ value: "mean Q", fill: C.textFaint, fontSize: 10, position: "insideBottom", dy: 10 }} />
           <YAxis tick={{ fill: C.textFaint, fontSize: 10 }} />
           <Tooltip contentStyle={tooltipStyle} />
-          <Bar dataKey="count" fill={C.raw} radius={[3, 3, 0, 0]} />
+          <Bar dataKey="count" fill={C.raw} radius={[2, 2, 0, 0]} />
         </BarChart>
       </ChartPanel>
 
@@ -79,7 +79,7 @@ export default function FastqCharts({ dataset, index, qualityThreshold, minLengt
             return (
               <div key={b} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
                 <div style={{ fontSize: 10.5, color: C.textDim, marginBottom: 4 }}>{pct.toFixed(1)}%</div>
-                <div style={{ width: "60%", height: `${Math.max(2, pct * 1.6)}px`, background: colors[b], borderRadius: "3px 3px 0 0" }} />
+                <div style={{ width: "60%", height: `${Math.max(2, pct * 1.6)}px`, background: colors[b], borderRadius: "2px 2px 0 0" }} />
                 <div style={{ fontSize: 12, color: C.text, marginTop: 6 }}>{b}</div>
               </div>
             );

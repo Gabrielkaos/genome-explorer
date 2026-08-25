@@ -58,7 +58,7 @@ export default function ResultsTable({ rows, traitType, stat = "p", fdr, selecte
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter by gene or product…"
           spellCheck={false}
           style={{
-            flex: "0 1 280px", background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6,
+            flex: "0 1 280px", background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2,
             padding: "6px 10px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 12,
           }} />
         <span style={{ fontSize: 11, color: C.textFaint }}>
@@ -66,9 +66,9 @@ export default function ResultsTable({ rows, traitType, stat = "p", fdr, selecte
         </span>
       </div>
 
-      <div style={{ overflowX: "auto", maxHeight: 460, overflowY: "auto", border: `1px solid ${C.border}`, borderRadius: 8 }}>
+      <div style={{ overflowX: "auto", maxHeight: 460, overflowY: "auto", border: `1px solid ${C.border}`, borderRadius: 2 }}>
         <table style={{ borderCollapse: "collapse", fontFamily: FONT_DISPLAY, fontSize: 11.5, width: "100%" }}>
-          <thead style={{ position: "sticky", top: 0, background: "#0b0f15", zIndex: 1 }}>
+          <thead style={{ position: "sticky", top: 0, background: "#0c1018", zIndex: 1 }}>
             <tr>
               <th onClick={() => { if (sortKey === "gene" && sortDir === -1) setSortDir(1); else { setSortKey("gene"); setSortDir(-1); } }}
                 style={{ padding: "6px 9px", cursor: "pointer", textAlign: "left", color: sortKey === "gene" ? C.pheno : C.textFaint, borderBottom: `1px solid ${C.border}` }}>
@@ -139,8 +139,13 @@ export default function ResultsTable({ rows, traitType, stat = "p", fdr, selecte
 
       {view.length > limit && (
         <button onClick={() => setLimit((l) => l + 500)}
-          style={{ all: "unset", cursor: "pointer", display: "block", margin: "10px auto 0", fontSize: 12, color: C.raw, border: `1px solid ${C.border}`, borderRadius: 6, padding: "6px 14px" }}>
-          Show more ({(view.length - limit).toLocaleString()} hidden)
+          style={{
+            all: "unset", cursor: "pointer", display: "block", margin: "10px auto 0",
+            fontSize: 12, color: C.raw, border: `1px solid ${C.border}`, borderRadius: 2, padding: "6px 14px",
+            fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+            textShadow: `0 0 6px ${C.raw}44`,
+          }}>
+          [ show_more ({(view.length - limit).toLocaleString()}_hidden) ]
         </button>
       )}
     </div>
@@ -175,7 +180,7 @@ export function RankedBar({ rows, stat = "p", fdr }) {
           <XAxis dataKey="gene" tick={false} label={{ value: "features ranked by evidence (first 400)", position: "insideBottom", offset: -16, fill: C.textDim, fontSize: 11.5 }} />
           <YAxis tick={{ fill: C.textDim, fontSize: 11 }} width={46}
             label={{ value: "-log10 p", angle: -90, position: "insideLeft", fill: C.textDim, fontSize: 11.5 }} />
-          <Tooltip contentStyle={{ background: "#0e131a", border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 12, color: C.text }}
+          <Tooltip contentStyle={{ background: "#0c1018", border: `1px solid ${C.border}`, borderRadius: 2, fontSize: 12, color: C.text, fontFamily: FONT_DISPLAY }}
             formatter={(v) => [`-log10 p = ${v.toFixed(2)}`]} />
           <ReferenceLine y={yLine} stroke={C.bad} strokeDasharray="5 4" />
           <Bar dataKey="y">

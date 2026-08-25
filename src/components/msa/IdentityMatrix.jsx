@@ -24,14 +24,14 @@ export default function IdentityMatrix({ ids, matrix }) {
               <tr key={rowId}>
                 <td style={rowHead} title={rowId}>{shortRow(rowId)}</td>
                 {ids.map((colId, j) => {
-                  if (j > i) return <td key={colId} style={{ ...cell, background: "rgba(255,255,255,0.02)" }} />;
+                  if (j > i) return <td key={colId} style={{ ...cell, background: "transparent" }} />;
                   const id = matrix[i * n + j];
                   const isDiag = i === j;
                   return (
                     <td key={colId} title={`${rowId} vs ${colId}: ${(id * 100).toFixed(2)}%`}
                       style={{
                         ...cell,
-                        background: isDiag ? "rgba(255,255,255,0.07)" : heat(id),
+                        background: isDiag ? "#0e1320" : heat(id),
                         color: isDiag ? C.textFaint : id > 0.55 ? "#0a0f0c" : C.text,
                         fontWeight: !isDiag && id < 0.9 ? 600 : 400,
                       }}>
@@ -58,15 +58,15 @@ function heat(id) {
 }
 
 const clip = { overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" };
-const corner = { padding: "4px 6px", position: "sticky", top: 0, left: 0, zIndex: 2, background: "#10151d" };
+const corner = { padding: "4px 6px", position: "sticky", top: 0, left: 0, zIndex: 2, background: C.bgPanel };
 const headCell = {
   padding: "4px 6px", color: C.textFaint, textAlign: "right", fontWeight: 400,
-  position: "sticky", top: 0, zIndex: 1, background: "#10151d",
+  position: "sticky", top: 0, zIndex: 1, background: C.bgPanel,
   minWidth: 46, maxWidth: 58, ...clip,
 };
 const rowHead = {
   padding: "4px 6px", color: C.textDim, textAlign: "left",
-  position: "sticky", left: 0, zIndex: 1, background: "#10151d",
+  position: "sticky", left: 0, zIndex: 1, background: C.bgPanel,
   minWidth: 92, maxWidth: 92, ...clip,
 };
 const cell = { padding: "3px 5px", textAlign: "right", minWidth: 46 };

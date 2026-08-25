@@ -129,7 +129,7 @@ export default function TreeView({ tree, layout = "rect", mode = "phylogram", sh
         <IconBtn onClick={() => { setView({ k: 1, x: 0, y: 0 }); }}><RotateCcw size={14} /></IconBtn>
       </div>
       <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxHeight: H + 40, display: "block",
-        borderRadius: 8, border: `1px solid ${C.border}`, background: "#0b0f15",
+        borderRadius: 2, border: `1px solid ${C.border}`, background: "#05070a",
         cursor: dragging ? "grabbing" : "grab" }}
         onPointerDown={(e) => {
           drag.current = { sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y };
@@ -386,8 +386,9 @@ function trimName(name) {
 function IconBtn({ children, onClick }) {
   return (
     <button onClick={onClick} style={{
-      all: "unset", cursor: "pointer", padding: 6, borderRadius: 6,
+      all: "unset", cursor: "pointer", padding: 6, borderRadius: 2,
       border: `1px solid ${C.border}`, color: C.textDim, display: "flex",
+      background: "#05070a",
     }}>{children}</button>
   );
 }

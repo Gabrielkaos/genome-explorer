@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
-import { C } from "../../theme.js";
+import { C, FONT_DISPLAY } from "../../theme.js";
 import { Panel, Eyebrow } from "../ui/Primitives.jsx";
 
 /**
@@ -79,10 +79,10 @@ export default function QCVerdictPanel({ dataset }) {
         {checks.map((c) => {
           const { color, Icon } = LEVEL_STYLE[c.level];
           return (
-            <div key={c.label} style={{ display: "flex", gap: 10, padding: "10px 12px", borderRadius: 8, border: `1px solid ${color}33`, background: `${color}0a` }}>
+            <div key={c.label} style={{ display: "flex", gap: 10, padding: "10px 12px", borderRadius: 2, border: `1px solid ${color}44`, background: "#05070a" }}>
               <Icon size={16} color={color} style={{ flexShrink: 0, marginTop: 1 }} />
               <div>
-                <div style={{ fontSize: 12.5, color: C.text, display: "flex", gap: 6, alignItems: "baseline" }}>
+                <div style={{ fontSize: 12.5, color: C.text, display: "flex", gap: 6, alignItems: "baseline", fontFamily: FONT_DISPLAY }}>
                   <span>{c.label}</span><span style={{ color, fontWeight: 600 }}>{c.value}</span>
                 </div>
                 <div style={{ fontSize: 11, color: C.textDim, marginTop: 2, lineHeight: 1.4 }}>{c.note}</div>

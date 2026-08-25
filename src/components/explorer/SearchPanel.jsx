@@ -50,7 +50,7 @@ export default function SearchPanel({ contig, features, onJump, onMarkHits }) {
           spellCheck={false}
           placeholder={mode === "feature" ? "locus tag or product…" : "IUPAC motif e.g. GCRWTTAT…"}
           style={{
-            width: "100%", background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6,
+            width: "100%", background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2,
             padding: "7px 26px 7px 28px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 12.5,
           }} />
         {query && (
@@ -74,7 +74,8 @@ export default function SearchPanel({ contig, features, onJump, onMarkHits }) {
               : jump(h.start0, h.end)}
             style={{
               all: "unset", cursor: "pointer", display: "block", width: "100%", boxSizing: "border-box",
-              padding: "5px 8px", borderRadius: 5, borderBottom: `1px solid ${C.border}`, fontSize: 11.5,
+              padding: "5px 8px", borderRadius: 2, borderBottom: `1px solid ${C.border}`, fontSize: 11.5,
+              background: "#05070a",
             }}>
             {mode === "feature" ? (
               <>
@@ -86,7 +87,7 @@ export default function SearchPanel({ contig, features, onJump, onMarkHits }) {
               <span style={{ fontFamily: FONT_DISPLAY, color: C.text }}>
                 {(h.start0 + 1).toLocaleString()}–{h.end.toLocaleString()}{" "}
                 <span style={{ color: h.strand === "+" ? C.good : C.bad }}>{h.strand === "+" ? "→" : "←"}</span>{" "}
-                <span style={{ color: C.qc }}>{h.match}</span>
+                <span style={{ color: C.qc, textShadow: `0 0 6px ${C.qc}44` }}>{h.match}</span>
               </span>
             )}
           </button>
@@ -99,10 +100,12 @@ export default function SearchPanel({ contig, features, onJump, onMarkHits }) {
 function Chip({ children, active, onClick }) {
   return (
     <button onClick={onClick} style={{
-      all: "unset", cursor: "pointer", fontSize: 11, padding: "3px 10px", borderRadius: 6,
-      background: active ? `${C.raw}22` : "transparent",
+      all: "unset", cursor: "pointer", fontSize: 11, padding: "3px 10px", borderRadius: 2,
+      background: active ? `${C.raw}22` : "#05070a",
       border: `1px solid ${active ? C.raw : C.border}`,
       color: active ? C.raw : C.textDim,
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      textShadow: active ? `0 0 6px ${C.raw}44` : "none",
     }}>{children}</button>
   );
 }

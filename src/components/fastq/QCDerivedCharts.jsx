@@ -46,7 +46,7 @@ export default function QCDerivedCharts({ dataset, index, previewRecords }) {
           <XAxis dataKey="label" tick={{ fill: C.textFaint, fontSize: 10 }} label={{ value: "% GC", fill: C.textFaint, fontSize: 10, position: "insideBottom", dy: 10 }} />
           <YAxis tick={{ fill: C.textFaint, fontSize: 10 }} />
           <Tooltip contentStyle={tooltipStyle} formatter={(v, n, p) => [v, `${p.payload.rangeStart}-${p.payload.rangeEnd}%`]} />
-          <Bar dataKey="count" fill={C.qc} radius={[3, 3, 0, 0]} />
+          <Bar dataKey="count" fill={C.qc} radius={[2, 2, 0, 0]} />
         </BarChart>
       </ChartPanel>
 

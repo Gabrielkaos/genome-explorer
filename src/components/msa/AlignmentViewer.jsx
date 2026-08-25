@@ -254,7 +254,7 @@ const AlignmentViewer = forwardRef(function AlignmentViewer({
     <div ref={wrapRef}>
       <canvas
         ref={canvasRef}
-        style={{ width: "100%", height: CANVAS_H, borderRadius: 8, border: `1px solid ${C.border}`, cursor: drag.current?.moved ? "grabbing" : "crosshair", display: "block" }}
+        style={{ width: "100%", height: CANVAS_H, borderRadius: 2, border: `1px solid ${C.border}`, cursor: drag.current?.moved ? "grabbing" : "crosshair", display: "block" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

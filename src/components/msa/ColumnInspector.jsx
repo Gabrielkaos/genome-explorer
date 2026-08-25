@@ -55,10 +55,10 @@ export default function ColumnInspector({ col, ids, rows, sites, onClose, onStep
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         {[0, 1, 2, 3, 4].map((a) => (
           <div key={a} style={{ minWidth: 92 }}>
-            <div style={{ fontSize: 11, color: a === 4 ? C.textFaint : BASE_COLORS[a], fontFamily: FONT_DISPLAY }}>
+            <div style={{ fontSize: 11, color: a === 4 ? C.textFaint : BASE_COLORS[a], fontFamily: FONT_DISPLAY, textShadow: a !== 4 ? `0 0 6px ${BASE_COLORS[a]}44` : "none" }}>
               {BASE_LETTERS[a]} · {info.counts[a]}
             </div>
-            <div style={{ height: 5, background: "#05070a", borderRadius: 3, marginTop: 3, overflow: "hidden" }}>
+            <div style={{ height: 5, background: "#05070a", borderRadius: 1, marginTop: 3, overflow: "hidden" }}>
               <div style={{
                 width: `${(info.counts[a] / Math.max(1, total)) * 100}%`, height: "100%",
                 background: a === 4 ? "#39424e" : BASE_COLORS[a],
@@ -69,7 +69,7 @@ export default function ColumnInspector({ col, ids, rows, sites, onClose, onStep
       </div>
 
       {info.differing.length > 0 && (
-        <div style={{ marginTop: 12, fontSize: 12, color: C.textDim }}>
+        <div style={{ marginTop: 12, fontSize: 12, color: C.textDim, fontFamily: FONT_DISPLAY }}>
           Minority alleles in{" "}
           <span style={{ color: C.text }}>{info.differing.length}</span> of {total} sequences:{" "}
           {info.differing.slice(0, 14).map((d, i) => (
@@ -87,8 +87,9 @@ export default function ColumnInspector({ col, ids, rows, sites, onClose, onStep
 function IconMini({ children, onClick, disabled }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{
-      all: "unset", cursor: disabled ? "default" : "pointer", padding: 5, borderRadius: 6,
+      all: "unset", cursor: disabled ? "default" : "pointer", padding: 5, borderRadius: 2,
       border: `1px solid ${C.border}`, color: disabled ? C.borderStrong : C.textDim, display: "flex",
+      background: "#05070a",
     }}>{children}</button>
   );
 }

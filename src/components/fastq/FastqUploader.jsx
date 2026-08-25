@@ -30,9 +30,9 @@ export default function FastqUploader({ status, progress, onFile, onCancel, erro
         onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFiles(e.dataTransfer.files); }}
         onClick={() => !isParsing && inputRef.current?.click()}
         style={{
-          border: `1.5px dashed ${dragOver ? C.raw : C.border}`, borderRadius: 10, padding: "26px 20px",
+          border: `1px solid ${dragOver ? C.raw : C.border}`, borderRadius: 2, padding: "26px 20px",
           textAlign: "center", cursor: isParsing ? "default" : "pointer",
-          background: dragOver ? `${C.raw}0c` : "transparent", transition: "border-color .15s, background .15s",
+          background: dragOver ? `${C.raw}08` : "transparent", transition: "border-color .15s, background .15s",
         }}
       >
         <input ref={inputRef} type="file" accept=".fastq,.fq,.fastq.gz,.fq.gz,.txt,.gz" hidden
@@ -50,22 +50,22 @@ export default function FastqUploader({ status, progress, onFile, onCancel, erro
           <>
             <Loader2 size={22} color={C.raw} className="spin" style={{ marginBottom: 8 }} />
             <div style={{ fontSize: 14, color: C.text }}>Parsing… {progress.readsProcessed.toLocaleString()} reads processed</div>
-            <div style={{ width: "100%", maxWidth: 420, height: 6, background: "#05070a", borderRadius: 3, margin: "12px auto 6px", overflow: "hidden" }}>
+            <div style={{ width: "100%", maxWidth: 420, height: 6, background: "#05070a", borderRadius: 1, margin: "12px auto 6px", overflow: "hidden" }}>
               <div style={{ width: `${pct}%`, height: "100%", background: C.raw, transition: "width .2s" }} />
             </div>
             <div style={{ fontSize: 11.5, color: C.textFaint, fontFamily: FONT_DISPLAY }}>
               {formatBytes(progress.bytesProcessed)} / {formatBytes(progress.totalBytes)}
             </div>
             <button onClick={(e) => { e.stopPropagation(); onCancel(); }}
-              style={{ all: "unset", cursor: "pointer", marginTop: 12, fontSize: 12, color: C.bad, display: "inline-flex", alignItems: "center", gap: 5 }}>
-              <X size={13} /> Cancel
+              style={{ all: "unset", cursor: "pointer", marginTop: 12, fontSize: 12, color: C.bad, display: "inline-flex", alignItems: "center", gap: 5, fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <X size={13} /> [ cancel ]
             </button>
           </>
         )}
       </div>
 
       {error && (
-        <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 8, fontSize: 12.5, background: "rgba(230,104,95,0.08)", border: `1px solid ${C.bad}55`, color: "#f2b3ad" }}>
+        <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 2, fontSize: 12.5, background: "#05070a", border: `1px solid ${C.bad}55`, color: "#f2b3ad" }}>
           {error}
         </div>
       )}
@@ -80,10 +80,11 @@ export default function FastqUploader({ status, progress, onFile, onCancel, erro
         onClick={() => onFile(generateSampleFastqFile())}
         style={{
           all: "unset", cursor: isParsing ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-          marginTop: 14, padding: "9px 14px", borderRadius: 8, border: `1px solid ${C.raw}55`, color: C.raw, fontSize: 12.5,
+          marginTop: 14, padding: "9px 14px", borderRadius: 2, border: `1px solid ${C.raw}55`, color: C.raw, fontSize: 12.5,
+          fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
           opacity: isParsing ? 0.5 : 1,
         }}>
-        <Sparkles size={13} /> Load a synthetic sample dataset instead
+        <Sparkles size={13} /> [ load_sample ]
       </button>
 
       <style>{`

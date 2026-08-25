@@ -48,11 +48,11 @@ export default function FeatureDetail({ gene }) {
   return (
     <Panel style={{ padding: 18 }}>
       <Eyebrow color={C.annotation}>CDS · {gene.strand === "+" ? "forward" : "reverse"} strand</Eyebrow>
-      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 16, color: C.text }}>{gene.locusTag}</div>
+      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 16, color: C.text, textShadow: `0 0 6px ${C.annotation}33` }}>{gene.locusTag}</div>
       <div style={{ fontSize: 12.5, color: C.textDim, margin: "4px 0 12px" }}>{gene.product}{gene.partial ? ` — truncated at contig edge (${gene.partial})` : ""}</div>
 
       <Row label="Location" value={`${gene.contigId}:${start.toLocaleString()}–${end.toLocaleString()} (${(end - start + 1).toLocaleString()} bp)`} mono />
-      <Row label="Start codon / RBS" value={`${gene.startCodon ?? "—"} · RBS ${gene.rbsScore.toFixed(2)}${gene.rbsSpacer !== null && gene.rbsSpacer !== undefined ? ` (spacer ${gene.rbsSpacer} nt)` : ""}`} />
+      <Row label="Start codon / RBS" value={`${gene.startCodon ?? "—"} · RBS ${gene.rbsScore.toFixed(2)}${gene.rbsSpacer !== null && gene.rbsSpacer !== undefined ? ` (spacer ${gene.rbsSpacer} nt)` : ""}`} mono />
       <Row label="Coding score" value={`${gene.score.toFixed(2)} total · coding term ${gene.codingTerm.toFixed(2)} · mean hexamer LLR ${gene.meanHexLR.toFixed(2)}`} mono />
       <Row label="Protein size" value={`${gene.lengthAa.toLocaleString()} aa`} mono />
       <Row label="Molecular weight" value={`${(gene.mw / 1000).toFixed(1)} kDa`} mono />
@@ -75,18 +75,18 @@ export default function FeatureDetail({ gene }) {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, marginBottom: 4 }}>
         <Eyebrow color={C.annotation}>Protein ({gene.lengthAa} aa)</Eyebrow>
-        <button onClick={() => copy(`>${gene.locusTag}\n${gene.protSeq}`)} style={copyBtn}><Copy size={11} /> copy</button>
+        <button onClick={() => copy(`>${gene.locusTag}\n${gene.protSeq}`)} style={copyBtn}><Copy size={11} /> [ copy ]</button>
       </div>
-      <div style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6, padding: 8, maxHeight: 120, overflowY: "auto", wordBreak: "break-all", lineHeight: 1.8, fontSize: 11.5, fontFamily: FONT_DISPLAY }}>
+      <div style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, padding: 8, maxHeight: 120, overflowY: "auto", wordBreak: "break-all", lineHeight: 1.8, fontSize: 11.5, fontFamily: FONT_DISPLAY }}>
         {aaCells}
       </div>
       <div style={{ fontSize: 10, color: C.textFaint, marginTop: 3 }}>highlighted = predicted signal peptide (green) / TM helices (orange)</div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, marginBottom: 4 }}>
         <Eyebrow color={C.annotation}>Nucleotide ({gene.lengthNt.toLocaleString()} nt)</Eyebrow>
-        <button onClick={() => copy(`>${gene.locusTag}\n${gene.dnaSeq}`)} style={copyBtn}><Copy size={11} /> copy</button>
+        <button onClick={() => copy(`>${gene.locusTag}\n${gene.dnaSeq}`)} style={copyBtn}><Copy size={11} /> [ copy ]</button>
       </div>
-      <div style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6, padding: 8, maxHeight: 90, overflowY: "auto", wordBreak: "break-all", lineHeight: 1.7, fontSize: 10.5, fontFamily: FONT_DISPLAY, color: C.textDim }}>
+      <div style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, padding: 8, maxHeight: 90, overflowY: "auto", wordBreak: "break-all", lineHeight: 1.7, fontSize: 10.5, fontFamily: FONT_DISPLAY, color: C.textDim }}>
         {gene.dnaSeq}
       </div>
     </Panel>
@@ -95,5 +95,6 @@ export default function FeatureDetail({ gene }) {
 
 const copyBtn = {
   all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5,
-  fontSize: 11, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 6, padding: "3px 9px",
+  fontSize: 11, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 2, padding: "3px 9px",
+  fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
 };

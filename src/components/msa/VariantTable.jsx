@@ -25,13 +25,13 @@ export default function VariantTable({ sites, totalSites, selectedCol, onSelect 
               <tr key={s.pos} onClick={() => onSelect(s.pos)}
                 style={{
                   cursor: "pointer",
-                  background: s.pos === selectedCol ? "rgba(255,255,255,0.08)" : "transparent",
+                  background: s.pos === selectedCol ? C.bgPanel2 : "transparent",
                 }}>
                 <td style={cellTd}>{s.pos + 1}</td>
-                <td style={{ ...cellTd, color: BASE_COLOR_MAP[s.consensus] || C.textDim }}>{s.consensus}</td>
+                <td style={{ ...cellTd, color: BASE_COLOR_MAP[s.consensus] || C.textDim, textShadow: BASE_COLOR_MAP[s.consensus] ? `0 0 6px ${BASE_COLOR_MAP[s.consensus]}44` : "none" }}>{s.consensus}</td>
                 <td style={{ ...cellTd, color: C.text }}>{s.alleles.join("  ")}</td>
                 <td style={{ ...cellTd, color: s.indel ? C.qc : C.textDim }}>{s.indel ? "indel" : "SNP"}</td>
-                <td style={{ ...cellTd, color: s.informative ? C.good : C.textFaint }}>
+                <td style={{ ...cellTd, color: s.informative ? C.good : C.textFaint, textShadow: s.informative ? `0 0 6px ${C.good}44` : "none" }}>
                   {s.informative ? "yes" : "singleton"}
                 </td>
               </tr>
@@ -39,7 +39,7 @@ export default function VariantTable({ sites, totalSites, selectedCol, onSelect 
           </tbody>
         </table>
         {totalSites > shown.length && (
-          <div style={{ fontSize: 10.5, color: C.textFaint, padding: "8px 4px" }}>
+          <div style={{ fontSize: 10.5, color: C.textFaint, padding: "8px 4px", fontFamily: FONT_DISPLAY }}>
             …{totalSites - shown.length} more — export the variants TSV for the full list.
           </div>
         )}
@@ -50,5 +50,5 @@ export default function VariantTable({ sites, totalSites, selectedCol, onSelect 
 
 const BASE_COLOR_MAP = { A: "#68c98f", C: "#5ec8d8", G: "#e8c15a", T: "#ef7fa3" };
 
-const head = { textAlign: "left", padding: "5px 10px", color: C.textFaint, position: "sticky", top: 0, background: "#10151d", letterSpacing: "0.04em" };
+const head = { textAlign: "left", padding: "5px 10px", color: C.textFaint, position: "sticky", top: 0, background: C.bgPanel, letterSpacing: "0.06em", textTransform: "uppercase", fontSize: 10.5 };
 const cellTd = { padding: "4px 10px", borderBottom: `1px solid ${C.border}` };

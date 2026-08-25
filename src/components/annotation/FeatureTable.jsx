@@ -44,15 +44,17 @@ export default function FeatureTable({ genes, selectedGeneId, onSelectGene }) {
   const shown = filtered.slice(0, RENDER_CAP);
   const chip = (active, onClick, children) => (
     <button onClick={onClick} style={{
-      all: "unset", cursor: "pointer", fontSize: 11, padding: "3px 9px", borderRadius: 6,
-      background: active ? `${C.annotation}22` : "transparent",
+      all: "unset", cursor: "pointer", fontSize: 11, padding: "3px 9px", borderRadius: 2,
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      background: active ? `${C.annotation}22` : "#05070a",
       border: `1px solid ${active ? C.annotation : C.border}`,
       color: active ? C.annotation : C.textDim,
+      textShadow: active ? `0 0 6px ${C.annotation}44` : "none",
     }}>{children}</button>
   );
   const th = (key, label, width) => (
     <th onClick={() => { setSortKey(key); setSortDir(sortKey === key ? -sortDir : 1); }}
-      style={{ textAlign: "left", padding: "5px 8px", color: C.textFaint, fontSize: 10.5, cursor: "pointer", userSelect: "none", width }}>
+      style={{ textAlign: "left", padding: "5px 8px", color: C.textFaint, fontSize: 10.5, fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.04em", cursor: "pointer", userSelect: "none", width }}>
       {label}{sortKey === key ? (sortDir === 1 ? " ▲" : " ▼") : ""}
     </th>
   );
@@ -62,7 +64,7 @@ export default function FeatureTable({ genes, selectedGeneId, onSelectGene }) {
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginBottom: 10 }}>
         <Eyebrow color={C.annotation}>Feature table</Eyebrow>
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="filter by locus tag or protein sequence…"
-          style={{ flex: 1, minWidth: 160, background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 10px", color: C.text, fontSize: 12 }} />
+          style={{ flex: 1, minWidth: 160, background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, padding: "5px 10px", color: C.text, fontSize: 12, fontFamily: FONT_DISPLAY }} />
         {chip(onlyTm, () => setOnlyTm(!onlyTm), "TM helices")}
         {chip(onlySignal, () => setOnlySignal(!onlySignal), "signal peptide")}
         {chip(onlyPartial, () => setOnlyPartial(!onlyPartial), "partial")}
@@ -77,7 +79,7 @@ export default function FeatureTable({ genes, selectedGeneId, onSelectGene }) {
               {th("score", "Score", 60)}
               {th("rbs", "RBS", 55)}
               {th("gc", "GC%", 55)}
-              <th style={{ textAlign: "left", padding: "5px 8px", color: C.textFaint, fontSize: 10.5 }}>Flags</th>
+              <th style={{ textAlign: "left", padding: "5px 8px", color: C.textFaint, fontSize: 10.5, fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.04em" }}>Flags</th>
             </tr>
           </thead>
           <tbody>
@@ -114,6 +116,6 @@ export default function FeatureTable({ genes, selectedGeneId, onSelectGene }) {
 
 function Flag({ color, children }) {
   return (
-    <span style={{ fontSize: 9.5, fontFamily: FONT_DISPLAY, color, border: `1px solid ${color}55`, borderRadius: 4, padding: "1px 5px", marginRight: 4 }}>{children}</span>
+    <span style={{ fontSize: 9.5, fontFamily: FONT_DISPLAY, color, border: `1px solid ${color}55`, borderRadius: 2, padding: "1px 5px", marginRight: 4, textTransform: "uppercase", letterSpacing: "0.04em" }}>{children}</span>
   );
 }

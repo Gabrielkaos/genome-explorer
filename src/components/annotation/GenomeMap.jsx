@@ -108,7 +108,7 @@ export default function GenomeMap({ contig, genes, gcPoints, selectedGeneId, onS
       </div>
 
       {/* overview strip */}
-      <div style={{ height: 14, background: "#05070a", borderRadius: 4, position: "relative", marginBottom: 6, cursor: "pointer" }}
+      <div style={{ height: 14, background: "#05070a", borderRadius: 2, border: `1px solid ${C.border}`, position: "relative", marginBottom: 6, cursor: "pointer" }}
         onClick={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
           const frac = (e.clientX - r.left) / r.width;
@@ -120,6 +120,7 @@ export default function GenomeMap({ contig, genes, gcPoints, selectedGeneId, onS
           left: `${(viewStart / contig.seq.length) * 100}%`,
           width: `${(clampedWindow / contig.seq.length) * 100}%`,
           background: `${C.annotation}33`, border: `1px solid ${C.annotation}`,
+          borderRadius: 1,
         }} />
       </div>
 
@@ -154,7 +155,10 @@ export default function GenomeMap({ contig, genes, gcPoints, selectedGeneId, onS
 function IconBtn({ children, onClick, title }) {
   return (
     <button onClick={onClick} title={title}
-      style={{ all: "unset", cursor: "pointer", padding: 5, borderRadius: 6, border: `1px solid ${C.border}`, color: C.textDim, display: "flex" }}>
+      style={{
+        all: "unset", cursor: "pointer", padding: 5, borderRadius: 2, border: `1px solid ${C.border}`,
+        color: C.textDim, display: "flex", background: "#05070a",
+      }}>
       {children}
     </button>
   );

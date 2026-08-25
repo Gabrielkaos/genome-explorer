@@ -113,11 +113,12 @@ export default function AssemblySection({ explainMode }) {
           disabled={fetching || asm.status === "running" || !selection || selection.chosen.length < 2}
           style={{
             all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 7, marginTop: 14,
-            padding: "9px 16px", borderRadius: 8, border: `1px solid ${C.assembly}66`, color: C.assembly, fontSize: 13,
+            padding: "9px 16px", borderRadius: 2, border: `1px solid ${C.assembly}66`, color: C.assembly, fontSize: 13,
+            fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
             opacity: fetching || asm.status === "running" ? 0.6 : 1,
           }}>
           {fetching || asm.status === "running" ? <Loader2 size={14} className="spin" /> : <Play size={14} />}
-          {fetching ? "Fetching read sequences…" : asm.status === "running" ? "Assembling…" : "Run assembly"}
+          {fetching ? "[ fetching_reads… ]" : asm.status === "running" ? "[ assembling… ]" : "[ run_assembly ]"}
         </button>
 
         <style>{`.spin { animation: spin 1s linear infinite; } @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }`}</style>
@@ -125,13 +126,13 @@ export default function AssemblySection({ explainMode }) {
         {asm.status === "running" && (
           <div style={{ marginTop: 14 }}>
             <div style={{ fontSize: 12, color: C.textDim, marginBottom: 6 }}>{STAGE_LABEL[asm.stage] || "Working…"}</div>
-            <div style={{ height: 6, background: "#05070a", borderRadius: 3, overflow: "hidden" }}>
+            <div style={{ height: 6, background: "#05070a", borderRadius: 1, overflow: "hidden" }}>
               <div style={{ width: `${asm.pct}%`, height: "100%", background: C.assembly, transition: "width .2s" }} />
             </div>
           </div>
         )}
         {asm.error && (
-          <div style={{ marginTop: 12, display: "flex", gap: 8, fontSize: 12.5, color: "#f2b3ad" }}>
+          <div style={{ marginTop: 12, display: "flex", gap: 8, fontSize: 12.5, color: "#f2b3ad", background: "#05070a", border: `1px solid ${C.bad}55`, borderRadius: 2, padding: "8px 12px" }}>
             <AlertTriangle size={14} /> {asm.error}
           </div>
         )}

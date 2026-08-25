@@ -5,7 +5,7 @@ import {
   Layers, Table2, Waypoints, CircuitBoard,
   ScrollText,
 } from "lucide-react";
-import { C, FONT_DISPLAY, FONT_HEAD, FONT_BODY, FONT_IMPORT } from "./theme.js";
+import { C, FONT, FONT_DISPLAY, FONT_HEAD, FONT_BODY, FONT_IMPORT } from "./theme.js";
 import { Panel, Eyebrow, ExplainBox, LimitBanner, SectionTitle } from "./components/ui/Primitives.jsx";
 import { FastqDataProvider } from "./state/FastqDataContext.jsx";
 import FastqSection from "./components/fastq/FastqSection.jsx";
@@ -121,7 +121,7 @@ function PipelineOverview({ explainMode, onJump }) {
         subtitle="Nanopore reads → cleaned data → assembled genome → annotated genes → aligned genomes → evolutionary tree → genotype/phenotype analysis → interactive browser" />
 
       <Panel style={{ padding: 0, position: "relative", overflow: "hidden" }}>
-        <div style={{ padding: "28px 24px 32px", overflowX: "auto" }}>
+        <div style={{ padding: "20px 20px 24px", overflowX: "auto" }}>
         <div style={{ display: "flex", alignItems: "center", minWidth: 1080 }}>
           {STAGES.map((s, i) => (
             <React.Fragment key={s.id}>
@@ -129,49 +129,49 @@ function PipelineOverview({ explainMode, onJump }) {
                 onClick={() => setOpenStage(s.id)}
                 style={{
                   all: "unset", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center",
-                  gap: 8, width: 108, flexShrink: 0, textAlign: "center",
+                  gap: 6, width: 108, flexShrink: 0, textAlign: "center",
                 }}
               >
                 <div style={{
-                  width: 54, height: 54, borderRadius: 12, background: `${s.color}16`,
-                  border: `1.5px solid ${s.color}66`, display: "flex", alignItems: "center", justifyContent: "center",
-                  transition: "transform .15s, border-color .15s",
+                  width: 48, height: 48, borderRadius: 2, background: `${s.color}10`,
+                  border: `1px solid ${s.color}44`, display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "transform .15s, box-shadow .15s",
                 }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-3px)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 0 12px ${s.color}33`; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  <s.icon size={22} color={s.color} />
+                  <s.icon size={20} color={s.color} />
                 </div>
-                <div style={{ fontSize: 11.5, color: C.text, fontFamily: FONT_DISPLAY, lineHeight: 1.25 }}>{s.short}</div>
+                <div style={{ fontSize: 10.5, color: C.text, fontFamily: FONT, lineHeight: 1.25 }}>{s.short.toLowerCase()}</div>
               </button>
               {i < STAGES.length - 1 && (
-                <div style={{ position: "relative", flex: 1, height: 2, background: `linear-gradient(90deg, ${s.color}55, ${STAGES[i + 1].color}55)`, minWidth: 26, marginBottom: 22 }}>
-                  <div className="flow-dot" style={{ background: s.color, boxShadow: `0 0 6px ${s.color}` }} />
+                <div style={{ position: "relative", flex: 1, height: 1, background: `linear-gradient(90deg, ${s.color}44, ${STAGES[i + 1].color}44)`, minWidth: 26, marginBottom: 20 }}>
+                  <div className="flow-dot" style={{ background: s.color, boxShadow: `0 0 8px ${s.color}` }} />
                 </div>
               )}
             </React.Fragment>
           ))}
         </div>
         </div>
-        <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: 56, pointerEvents: "none", background: `linear-gradient(90deg, transparent, ${C.bg})`, opacity: 0.9 }} />
-        <div style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 24, pointerEvents: "none", background: `linear-gradient(90deg, ${C.bg}, transparent)`, opacity: 0.6 }} />
+        <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: 48, pointerEvents: "none", background: `linear-gradient(90deg, transparent, ${C.bgPanel})` }} />
+        <div style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 20, pointerEvents: "none", background: `linear-gradient(90deg, ${C.bgPanel}, transparent)` }} />
       </Panel>
       <div style={{ fontSize: 10.5, color: C.textFaint, marginTop: 6, textAlign: "right" }}>← scroll for full pipeline →</div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px,1fr))", gap: 12, marginTop: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px,1fr))", gap: 10, marginTop: 14 }}>
         {STAGES.map((s) => (
-          <Panel key={s.id} style={{ padding: "16px 18px", cursor: "pointer", borderTop: `2px solid ${s.color}55` }} className="hoverlift">
+          <Panel key={s.id} style={{ padding: "14px 16px", cursor: "pointer", borderLeft: `2px solid ${s.color}44` }} className="hoverlift">
             <div onClick={() => setOpenStage(s.id)}>
-              <Eyebrow color={s.color}>{s.short}</Eyebrow>
-              <div style={{ fontSize: 13.5, color: C.text, lineHeight: 1.45, fontWeight: 500 }}>{s.tagline}</div>
-              <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 11.5, color: s.color, display: "flex", alignItems: "center", gap: 4 }}>
-                  Details <ChevronRight size={13} />
+              <Eyebrow color={s.color}>{s.short.toLowerCase()}</Eyebrow>
+              <div style={{ fontSize: 12.5, color: C.text, lineHeight: 1.45, fontWeight: 400, fontFamily: FONT }}>{s.tagline}</div>
+              <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 11, color: s.color, display: "flex", alignItems: "center", gap: 4, fontFamily: FONT }}>
+                  [ details ] <ChevronRight size={11} />
                 </span>
                 {onJump && (
                   <button onClick={(e) => { e.stopPropagation(); onJump(s.id); }}
-                    style={{ all: "unset", cursor: "pointer", fontSize: 11, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 6, padding: "3px 8px" }}>
-                    Open section
+                    style={{ all: "unset", cursor: "pointer", fontSize: 10.5, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 2, padding: "2px 8px", fontFamily: FONT }}>
+                    [ open ]
                   </button>
                 )}
               </div>
@@ -182,23 +182,23 @@ function PipelineOverview({ explainMode, onJump }) {
 
       {stage && (
         <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", justifyContent: "flex-end" }}>
-          <div onClick={() => setOpenStage(null)} style={{ position: "absolute", inset: 0, background: "rgba(3,5,8,0.6)", backdropFilter: "blur(2px)" }} />
+          <div onClick={() => setOpenStage(null)} style={{ position: "absolute", inset: 0, background: "rgba(3,5,8,0.7)" }} />
           <div style={{
-            position: "relative", width: "min(460px, 92vw)", height: "100%", background: "#0b0f15",
-            borderLeft: `1px solid ${stage.color}55`, padding: "26px 24px", overflowY: "auto",
-            boxShadow: "-30px 0 60px rgba(0,0,0,0.5)",
+            position: "relative", width: "min(460px, 92vw)", height: "100%", background: "#0a0e16",
+            borderLeft: `2px solid ${stage.color}44`, padding: "22px 20px", overflowY: "auto",
+            boxShadow: "-20px 0 40px rgba(0,0,0,0.6)",
           }}>
-            <button onClick={() => setOpenStage(null)} style={{ all: "unset", cursor: "pointer", position: "absolute", top: 20, right: 20, color: C.textDim }}>
-              <X size={18} />
+            <button onClick={() => setOpenStage(null)} style={{ all: "unset", cursor: "pointer", position: "absolute", top: 18, right: 18, color: C.textDim }}>
+              <X size={16} />
             </button>
-            <Eyebrow color={stage.color}>{stage.short}</Eyebrow>
-            <div style={{ fontFamily: FONT_HEAD, fontWeight: 600, fontSize: 22, color: C.text }}>{stage.label}</div>
-            <div style={{ fontSize: 13.5, color: C.textDim, marginTop: 4, marginBottom: 20 }}>{stage.tagline}</div>
+            <Eyebrow color={stage.color}>{stage.short.toLowerCase()}</Eyebrow>
+            <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 18, color: C.text, textShadow: `0 0 10px ${stage.color}22` }}>{stage.label}</div>
+            <div style={{ fontSize: 12.5, color: C.textDim, marginTop: 3, marginBottom: 18, fontFamily: FONT }}>{stage.tagline}</div>
 
-            {[["Input", stage.input], ["What it does", stage.does], ["Output", stage.output], ["Biological question answered", stage.question]].map(([h, v]) => (
-              <div key={h} style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: stage.color, marginBottom: 4 }}>{h}</div>
-                <div style={{ fontSize: 13.5, color: C.text, lineHeight: 1.55 }}>{v}</div>
+            {[["input", stage.input], ["process", stage.does], ["output", stage.output], ["question", stage.question]].map(([h, v]) => (
+              <div key={h} style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: "0.08em", color: stage.color, marginBottom: 3, fontFamily: FONT }}>{h}</div>
+                <div style={{ fontSize: 12.5, color: C.text, lineHeight: 1.55, fontFamily: FONT }}>{v}</div>
               </div>
             ))}
             <LimitBanner>{stage.limits}</LimitBanner>
@@ -208,10 +208,10 @@ function PipelineOverview({ explainMode, onJump }) {
       )}
 
       <style>{`
-        .flow-dot { position:absolute; top:-3px; width:8px; height:8px; border-radius:999px;
+        .flow-dot { position:absolute; top:-3px; width:7px; height:7px; border-radius:1px;
           animation: flow 2.4s linear infinite; }
         @keyframes flow { 0% { left:0%; opacity:0 } 8% { opacity:1 } 92% { opacity:1 } 100% { left:100%; opacity:0 } }
-        .hoverlift:hover { border-color: ${C.borderStrong} !important; transform: translateY(-2px); transition: all .15s; }
+        .hoverlift:hover { border-color: ${C.borderStrong} !important; transform: translateY(-1px); transition: all .12s; }
       `}</style>
     </div>
   );
@@ -273,64 +273,68 @@ function AppShell() {
 
   return (
     <div style={{
-      background: `radial-gradient(1100px 560px at 14% -8%, rgba(94,200,216,0.07), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(160,140,240,0.05), transparent 55%), ${C.bg}`,
-      minHeight: "100%", color: C.text, fontFamily: FONT_BODY, display: "flex",
+      background: C.bg,
+      minHeight: "100%", color: C.text, fontFamily: FONT, display: "flex",
     }}>
       <style>{`
         ${FONT_IMPORT}
         * { box-sizing: border-box; }
-        input[type=range] { height: 4px; border-radius: 2px; background: ${C.border}; -webkit-appearance:none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:999px; background:${C.raw}; box-shadow:0 0 0 3px rgba(94,200,216,0.18); cursor:pointer; margin-top:-5px; }
-        ::-webkit-scrollbar { width: 9px; height: 9px; }
-        ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 5px; }
+        input[type=range] { height: 3px; border-radius: 1px; background: ${C.border}; -webkit-appearance:none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; border-radius:2px; background:${C.raw}; box-shadow:0 0 6px rgba(0,255,65,0.3); cursor:pointer; margin-top:-5px; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 1px; }
         ::-webkit-scrollbar-thumb:hover { background: ${C.borderStrong}; }
-        button:focus-visible, input:focus-visible { outline: 2px solid ${C.raw}; outline-offset: 2px; }
+        button:focus-visible, input:focus-visible { outline: 1px solid ${C.raw}; outline-offset: 1px; }
       `}</style>
 
       {/* Sidebar */}
-      <div style={{ width: 212, flexShrink: 0, borderRight: `1px solid ${C.border}`, padding: "22px 13px", display: "flex", flexDirection: "column", gap: 3, background: "rgba(255,255,255,0.015)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "0 8px 22px" }}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: `${C.raw}18`, border: `1px solid ${C.raw}55`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Dna size={16} color={C.raw} />
-          </div>
-          <div style={{ fontFamily: FONT_HEAD, fontWeight: 700, fontSize: 14.5, color: C.text, lineHeight: 1.3, letterSpacing: "0.01em" }}>GENOME<br /><span style={{ color: C.textFaint, fontSize: 9.5, fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "0.1em" }}>PIPELINE EXPLORER</span></div>
+      <div style={{ width: 212, flexShrink: 0, borderRight: `1px solid ${C.border}`, padding: "18px 10px", display: "flex", flexDirection: "column", gap: 2, background: "#0a0e14" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 8px 18px" }}>
+          <span style={{ color: C.prompt, fontFamily: FONT, fontSize: 16, fontWeight: 700 }}>&gt;_</span>
+          <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13, color: C.prompt, lineHeight: 1.3, letterSpacing: "0.04em", textShadow: "0 0 10px rgba(0,255,65,0.3)" }}>GENOME<br /><span style={{ color: C.textFaint, fontSize: 9.5, fontWeight: 400, letterSpacing: "0.1em" }}>PIPELINE EXPLORER</span></div>
         </div>
         {NAV.map((n) => (
           <button key={n.id} onClick={() => setSection(n.id)}
             style={{
-              all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: 8,
-              background: section === n.id ? `${n.color}1c` : "transparent",
-              border: `1px solid ${section === n.id ? n.color + "40" : "transparent"}`,
-              color: section === n.id ? n.color : C.textDim, fontSize: 12.5, fontWeight: section === n.id ? 500 : 400,
-              transition: "background .12s, color .12s",
+              all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, padding: "6px 10px",
+              borderRadius: 2,
+              background: section === n.id ? `${n.color}12` : "transparent",
+              borderLeft: section === n.id ? `2px solid ${n.color}` : "2px solid transparent",
+              color: section === n.id ? n.color : C.textDim, fontSize: 12, fontFamily: FONT,
+              transition: "all .1s",
             }}
-            onMouseEnter={(e) => { if (section !== n.id) e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+            onMouseEnter={(e) => { if (section !== n.id) e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
             onMouseLeave={(e) => { if (section !== n.id) e.currentTarget.style.background = "transparent"; }}
           >
-            <n.icon size={15} /> {n.label}
+            <n.icon size={12} /> {n.label.toLowerCase().replace(/\s+/g, '_')}
           </button>
         ))}
-        <div style={{ marginTop: "auto", padding: "14px 8px 0", borderTop: `1px solid ${C.border}` }}>
-          <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12, color: C.textDim, marginBottom: 6 }}>
-            <input type="checkbox" checked={explainMode} onChange={(e) => setExplainMode(e.target.checked)} style={{ accentColor: C.raw }} />
-            Explain mode
+        <div style={{ marginTop: "auto", padding: "12px 8px 0", borderTop: `1px solid ${C.border}` }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 11, color: C.textDim, fontFamily: FONT, marginBottom: 6 }}>
+            <input type="checkbox" checked={explainMode} onChange={(e) => setExplainMode(e.target.checked)} style={{ accentColor: C.prompt }} />
+            --explain
           </label>
-          <div style={{ fontSize: 10.5, color: C.textFaint, lineHeight: 1.45 }}>
-            All computation runs locally in your browser. No uploads, no accounts - your data never leaves this machine.
+          <div style={{ fontSize: 10, color: C.textFaint, lineHeight: 1.45, fontFamily: FONT }}>
+            All computation runs locally in your browser. No uploads, no accounts — your data never leaves this machine.
           </div>
         </div>
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, minWidth: 0, padding: "28px 40px 70px" }}>
+      <div style={{ flex: 1, minWidth: 0, padding: "24px 36px 60px" }}>
         <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22,
-          paddingBottom: 14, borderBottom: `1px solid ${C.border}`,
+          fontSize: 11, color: C.textFaint, fontFamily: FONT,
+          padding: "8px 0 10px",
+          borderBottom: `1px solid ${C.border}`,
+          marginBottom: 18, display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
-          <div style={{ fontSize: 11.5, color: C.textFaint, fontFamily: FONT_DISPLAY, letterSpacing: "0.03em" }}>
-            <span style={{ color: C.good }}>●</span> LOCAL MODE &nbsp;·&nbsp; {active?.label ?? "Overview"}
+          <div>
+            <span style={{ color: C.good }}>●</span>{' '}
+            <span style={{ color: C.prompt }}>local</span>{' '}
+            <span style={{ color: C.textFaint }}>·</span>{' '}
+            {active?.label?.toLowerCase().replace(/\s+/g, '_') ?? "overview"}
           </div>
-          {explainMode && <div style={{ fontSize: 11.5, color: C.raw, display: "flex", alignItems: "center", gap: 5 }}><HelpCircle size={12} /> Explain mode on</div>}
+          {explainMode && <span style={{ color: C.raw }}>--explain</span>}
         </div>
 
         {section === "overview" && <PipelineOverview explainMode={explainMode} onJump={setSection} />}

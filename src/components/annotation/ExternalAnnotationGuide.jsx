@@ -66,9 +66,10 @@ export default function ExternalAnnotationGuide() {
           {asmAvailable && (
             <button onClick={() => downloadAssemblyFasta(asm.contigs)} style={{
               all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6,
-              marginTop: 8, fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 6, padding: "6px 12px",
+              marginTop: 8, fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 2, padding: "6px 12px",
+              fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
             }}>
-              <Download size={12} /> Download assembly.fasta ({asm.contigs.length} contig{asm.contigs.length !== 1 ? "s" : ""})
+              <Download size={12} /> [ download_assembly_fasta ({asm.contigs.length}) ]
             </button>
           )}
         </div>
@@ -83,15 +84,15 @@ export default function ExternalAnnotationGuide() {
             {DESTINATIONS.map((d) => (
               <a key={d.name} href={d.url} target="_blank" rel="noreferrer" style={{
                 textDecoration: "none", display: "block", background: "#05070a", border: `1px solid ${C.border}`,
-                borderRadius: 8, padding: "12px 13px", transition: "border-color .15s", cursor: "pointer",
+                borderRadius: 2, padding: "12px 13px", transition: "border-color .15s", cursor: "pointer",
               }}
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = `${C.raw}88`)}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 12.5, color: C.raw }}>{d.name}</span>
+                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 12.5, color: C.raw, textShadow: `0 0 6px ${C.raw}33` }}>{d.name}</span>
                   <ExternalLink size={11} color={C.textFaint} />
                 </div>
-                <div style={{ fontSize: 11, color: C.annotation, marginTop: 5 }}>{d.what}</div>
+                <div style={{ fontSize: 11, color: C.annotation, marginTop: 5, fontFamily: FONT_DISPLAY }}>{d.what}</div>
                 <div style={{ fontSize: 11.5, color: C.textDim, lineHeight: 1.5, marginTop: 5 }}>{d.how}</div>
                 <div style={{ fontSize: 11, color: C.textFaint, lineHeight: 1.5, marginTop: 6 }}>
                   You get back: {d.returns}
@@ -138,9 +139,10 @@ export default function ExternalAnnotationGuide() {
 function StepNum({ n }) {
   return (
     <div style={{
-      width: 22, height: 22, flexShrink: 0, borderRadius: 999, background: `${C.raw}18`,
+      width: 22, height: 22, flexShrink: 0, borderRadius: 2, background: `${C.raw}18`,
       border: `1px solid ${C.raw}55`, color: C.raw, fontFamily: FONT_DISPLAY,
       fontSize: 11.5, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 1,
+      textShadow: `0 0 6px ${C.raw}44`,
     }}>{n}</div>
   );
 }
@@ -149,12 +151,12 @@ function StepHead({ icon: Icon, title }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
       {Icon && <Icon size={13} color={C.raw} />}
-      <span style={{ fontSize: 13, color: C.text, fontWeight: 500 }}>{title}</span>
+      <span style={{ fontSize: 13, color: C.text, fontWeight: 500, fontFamily: FONT_DISPLAY }}>{title}</span>
     </div>
   );
 }
 
 const codeStyle = {
   fontFamily: FONT_DISPLAY, fontSize: 11, background: "#05070a",
-  border: `1px solid ${C.border}`, borderRadius: 4, padding: "1px 5px", color: C.textDim,
+  border: `1px solid ${C.border}`, borderRadius: 2, padding: "1px 5px", color: C.textDim,
 };

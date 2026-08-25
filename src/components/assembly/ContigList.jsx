@@ -22,7 +22,7 @@ function ReadLayoutDiagram({ contig }) {
         const y = 10 + i * 9;
         const x = 10 + m.contigStart * scaleX;
         const w = Math.max(1.5, (m.contigEnd - m.contigStart) * scaleX);
-        return <rect key={i} x={x} y={y} width={w} height={4} rx={1.5} fill={m.strand === 1 ? C.assembly : C.pheno} opacity={0.8} />;
+        return <rect key={i} x={x} y={y} width={w} height={4} rx={1} fill={m.strand === 1 ? C.assembly : C.pheno} opacity={0.8} />;
       })}
       <text x={10} y={H - 4} fontSize="9" fill={C.textFaint} fontFamily={FONT_DISPLAY}>{contig.length.toLocaleString()} bp · {contig.readCount} reads</text>
     </svg>
@@ -44,8 +44,12 @@ export default function ContigList({ contigs }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
         <Eyebrow color={C.assembly}>assembly.fasta ({contigs.length} contig{contigs.length !== 1 ? "s" : ""})</Eyebrow>
         <button onClick={() => downloadFasta(contigs)}
-          style={{ all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 6, padding: "6px 12px" }}>
-          <Download size={12} /> Download FASTA
+          style={{
+            all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
+            fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 2, padding: "6px 12px",
+            fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+          }}>
+          <Download size={12} /> [ download_fasta ]
         </button>
       </div>
 
@@ -59,7 +63,7 @@ export default function ContigList({ contigs }) {
       <ContigTable contigs={primary} expanded={expanded} setExpanded={setExpanded} />
       {fragments.length > 0 && (
         <details style={{ marginTop: 10 }}>
-          <summary style={{ cursor: "pointer", fontSize: 12, color: C.textDim }}>Show {fragments.length} smaller fragment{fragments.length !== 1 ? "s" : ""}</summary>
+          <summary style={{ cursor: "pointer", fontSize: 12, color: C.textDim, fontFamily: FONT_DISPLAY }}>Show {fragments.length} smaller fragment{fragments.length !== 1 ? "s" : ""}</summary>
           <div style={{ marginTop: 8 }}>
             <ContigTable contigs={fragments} expanded={expanded} setExpanded={setExpanded} />
           </div>
@@ -79,17 +83,17 @@ function ContigTable({ contigs, expanded, setExpanded }) {
             <div onClick={() => setExpanded(isOpen ? null : c.id)}
               style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", cursor: "pointer" }}>
               <span style={{ fontFamily: FONT_DISPLAY, fontSize: 12.5, color: C.text, width: 90 }}>{c.id}</span>
-              <span style={{ fontSize: 11.5, color: C.textDim, width: 100 }}>{c.length.toLocaleString()} bp</span>
-              <span style={{ fontSize: 11.5, color: C.textDim, width: 90 }}>{c.readCount} reads</span>
-              {c.circular && <span style={{ fontSize: 10, color: C.good, border: `1px solid ${C.good}55`, borderRadius: 4, padding: "1px 6px", display: "flex", alignItems: "center", gap: 3 }}><RotateCcw size={9} /> circular</span>}
+              <span style={{ fontSize: 11.5, color: C.textDim, width: 100, fontFamily: FONT_DISPLAY }}>{c.length.toLocaleString()} bp</span>
+              <span style={{ fontSize: 11.5, color: C.textDim, width: 90, fontFamily: FONT_DISPLAY }}>{c.readCount} reads</span>
+              {c.circular && <span style={{ fontSize: 10, color: C.good, border: `1px solid ${C.good}55`, borderRadius: 2, padding: "1px 6px", display: "flex", alignItems: "center", gap: 3, fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.04em" }}><RotateCcw size={9} /> circular</span>}
               <ChevronDown size={14} color={C.textFaint} style={{ marginLeft: "auto", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
             </div>
             {isOpen && (
               <div style={{ padding: "4px 14px 16px" }}>
                 <div style={{ fontSize: 10.5, color: C.textFaint, marginBottom: 6 }}>Read layout (bar color = strand: teal-purple forward, orange reverse)</div>
                 <ReadLayoutDiagram contig={c} />
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: 10.5, lineHeight: 1.7, background: "#05070a", padding: 10, borderRadius: 6, marginTop: 10, maxHeight: 160, overflowY: "auto", wordBreak: "break-all" }}>
-                  <div style={{ color: C.assembly }}>&gt;{c.id} length={c.length}{c.circular ? " circular=true" : ""}</div>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: 10.5, lineHeight: 1.7, background: "#05070a", border: `1px solid ${C.border}`, padding: 10, borderRadius: 2, marginTop: 10, maxHeight: 160, overflowY: "auto", wordBreak: "break-all" }}>
+                  <div style={{ color: C.assembly, textShadow: `0 0 6px ${C.assembly}33` }}>&gt;{c.id} length={c.length}{c.circular ? " circular=true" : ""}</div>
                   <div style={{ color: C.textDim }}>{(c.seq.match(/.{1,80}/g) || [c.seq]).slice(0, 6).join("\n")}{c.seq.length > 480 ? "\n…" : ""}</div>
                 </div>
               </div>

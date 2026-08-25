@@ -9,7 +9,7 @@ const BUFFER_ROWS = 8;
 
 function QualityStrip({ qual, width = 200 }) {
   return (
-    <div style={{ display: "flex", height: 12, borderRadius: 3, overflow: "hidden", width, flexShrink: 0 }}>
+    <div style={{ display: "flex", height: 12, borderRadius: 2, overflow: "hidden", width, flexShrink: 0 }}>
       {Array.from(qual).map((c, i) => {
         const q = c.charCodeAt(0) - 33;
         const t = Math.max(0, Math.min(1, q / 30));
@@ -77,11 +77,11 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
           <Search size={13} color={C.textFaint} />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search read ID…"
-            style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 10px", fontSize: 12, color: C.text, width: 180 }} />
+            style={{ background: "#05070a", border: `1px solid ${C.border}`, borderRadius: 2, padding: "5px 10px", fontSize: 12, color: C.text, width: 180, fontFamily: FONT_DISPLAY }} />
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 12, padding: "0 4px 6px", fontSize: 10.5, color: C.textFaint, borderBottom: `1px solid ${C.border}` }}>
+      <div style={{ display: "flex", gap: 12, padding: "0 4px 6px", fontSize: 10.5, color: C.textFaint, borderBottom: `1px solid ${C.border}`, fontFamily: FONT_DISPLAY, letterSpacing: "0.06em" }}>
         <span style={{ width: 90 }}>READ ID</span>
         <button onClick={() => toggleSort("length")} style={sortBtnStyle(sortKey === "length")}>LENGTH <ArrowUpDown size={10} /></button>
         <button onClick={() => toggleSort("quality")} style={{ ...sortBtnStyle(sortKey === "quality"), width: 60 }}>QUALITY <ArrowUpDown size={10} /></button>
@@ -100,12 +100,12 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
             return (
               <div key={i} style={{ position: "absolute", top: rowTop, left: 0, right: 0 }}>
                 <div onClick={() => setExpanded(isOpen ? null : i)}
-                  style={{ display: "flex", alignItems: "center", gap: 12, height: ROW_HEIGHT, padding: "0 4px", cursor: "pointer", borderBottom: `1px solid ${C.border}` }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 999, background: pass ? C.good : C.bad, flexShrink: 0 }} />
+                  style={{ display: "flex", alignItems: "center", gap: 12, height: ROW_HEIGHT, padding: "0 4px", cursor: "pointer", borderBottom: `1px solid ${C.border}`, fontFamily: FONT_DISPLAY }}>
+                  <span style={{ width: 8, height: 8, borderRadius: 2, background: pass ? C.good : C.bad, flexShrink: 0 }} />
                   <span style={{ fontFamily: FONT_DISPLAY, fontSize: 11.5, color: C.text, width: 82, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{id}</span>
-                  <span style={{ fontSize: 11, color: C.textDim, width: 70 }}>{len.toLocaleString()} bp</span>
-                  <span style={{ fontSize: 11, color: C.textDim, width: 46 }}>Q{q.toFixed(1)}</span>
-                  <span style={{ fontSize: 10.5, color: pass ? C.good : C.bad, marginLeft: "auto" }}>{pass ? "PASS" : "FAIL"}</span>
+                  <span style={{ fontSize: 11, color: C.textDim, width: 70, fontFamily: FONT_DISPLAY }}>{len.toLocaleString()} bp</span>
+                  <span style={{ fontSize: 11, color: C.textDim, width: 46, fontFamily: FONT_DISPLAY }}>Q{q.toFixed(1)}</span>
+                  <span style={{ fontSize: 10.5, color: pass ? C.good : C.bad, marginLeft: "auto", fontFamily: FONT_DISPLAY }}>{pass ? "PASS" : "FAIL"}</span>
                   <ChevronDown size={13} color={C.textFaint} style={{ transform: isOpen ? "rotate(180deg)" : "none", transition: "transform .15s" }} />
                 </div>
                 {isOpen && (
@@ -137,6 +137,7 @@ export default function FastqReadTable({ dataset, index, qualityThreshold, minLe
 function sortBtnStyle(active) {
   return {
     all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 3, width: 70,
+    fontFamily: FONT_DISPLAY, letterSpacing: "0.06em",
     color: active ? C.qc : "inherit",
   };
 }

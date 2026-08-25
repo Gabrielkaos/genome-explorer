@@ -181,7 +181,7 @@ export default function PhyloSection({ explainMode }) {
             placeholder={"Paste an ALIGNED multi-FASTA…\n>strainA\nATGGCGAAG…\n>strainB\nATGGCAAAA…"}
             style={{
               width: "100%", marginTop: 10, background: "#05070a", border: `1px solid ${C.border}`,
-              borderRadius: 8, padding: "10px 12px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 12.5,
+              borderRadius: 2, padding: "10px 12px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 12.5,
             }} />
         )}
 
@@ -241,17 +241,24 @@ export default function PhyloSection({ explainMode }) {
           <button onClick={handleRun} disabled={!canRun}
             style={{
               all: "unset", cursor: canRun ? "pointer" : "default", display: "inline-flex",
-              alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 8,
+              alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 2,
               border: `1px solid ${C.phylo}66`, color: C.phylo, fontSize: 13,
+              fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
               opacity: canRun ? 1 : 0.55,
+              textShadow: canRun ? `0 0 8px ${C.phylo}44` : "none",
             }}>
             {phyl.status === "running" ? <Loader2 size={14} className="spin" /> : <Play size={14} />}
-            {phyl.status === "running" ? "Inferring…" : "Infer tree"}
+            {phyl.status === "running" ? "[ inferring… ]" : "[ infer_tree ]"}
           </button>
           {phyl.status === "running" && (
             <button onClick={phyl.cancel}
-              style={{ all: "unset", cursor: "pointer", fontSize: 12, color: C.bad, border: `1px solid ${C.bad}66`, borderRadius: 6, padding: "7px 12px" }}>
-              Cancel
+              style={{
+                all: "unset", cursor: "pointer", fontSize: 12, color: C.bad,
+                border: `1px solid ${C.bad}66`, borderRadius: 2, padding: "7px 12px",
+                fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+                background: "#05070a",
+              }}>
+              [ cancel ]
             </button>
           )}
           {canRun && bootstrap > 100 && (
@@ -266,7 +273,7 @@ export default function PhyloSection({ explainMode }) {
             <div style={{ fontSize: 12, color: C.textDim, marginBottom: 6 }}>
               {STAGE_LABEL[phyl.stage] || "Working…"}{phyl.detail ? ` — ${phyl.detail}` : ""}
             </div>
-            <div style={{ height: 6, background: "#05070a", borderRadius: 3, overflow: "hidden" }}>
+            <div style={{ height: 6, background: "#05070a", borderRadius: 1, overflow: "hidden" }}>
               <div style={{ width: `${phyl.pct}%`, height: "100%", background: C.phylo, transition: "width .2s" }} />
             </div>
           </div>
@@ -384,9 +391,9 @@ function StatsRow({ res }) {
 
 function PairCard({ text, d }) {
   return (
-    <div style={{ background: C.bgPanel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 14px" }}>
-      <div style={{ fontSize: 10.5, color: C.textFaint, textTransform: "uppercase", letterSpacing: "0.08em" }}>Most divergent pair</div>
-      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 13, color: C.bad, marginTop: 3 }}>
+    <div style={{ background: C.bgPanel, border: `1px solid ${C.border}`, borderRadius: 2, padding: "10px 14px" }}>
+      <div style={{ fontSize: 10.5, color: C.textFaint, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: FONT_DISPLAY }}>Most divergent pair</div>
+      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 13, color: C.bad, marginTop: 3, textShadow: `0 0 8px ${C.bad}44` }}>
         {text} <span style={{ fontSize: 10, color: C.textDim }}>d = {d.toFixed(3)}</span>
       </div>
     </div>
@@ -396,11 +403,13 @@ function PairCard({ text, d }) {
 function ViewBtn({ active, onClick, children }) {
   return (
     <button onClick={onClick} style={{
-      all: "unset", cursor: "pointer", fontSize: 11, padding: "3px 9px", borderRadius: 6,
-      background: active ? `${C.phylo}22` : "transparent",
+      all: "unset", cursor: "pointer", fontSize: 11, padding: "3px 9px", borderRadius: 2,
+      background: active ? C.bgPanel2 : "transparent",
       border: `1px solid ${active ? C.phylo : C.border}`,
       color: active ? C.phylo : C.textDim,
-    }}>{children}</button>
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      textShadow: active ? `0 0 6px ${C.phylo}44` : "none",
+    }}>[ {children} ]</button>
   );
 }
 
@@ -412,8 +421,9 @@ function RootChip({ res }) {
   const color = p.method === "upgma" ? C.assembly : p.rooting === "midpoint" ? C.raw : C.qc;
   return (
     <span style={{
-      fontSize: 10.5, color, border: `1px solid ${color}44`, borderRadius: 6, padding: "2px 8px",
-      fontFamily: FONT_DISPLAY,
-    }}>{label}</span>
+      fontSize: 10.5, color, border: `1px solid ${color}44`, borderRadius: 2, padding: "2px 8px",
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      textShadow: `0 0 6px ${color}44`,
+    }}>[ {label} ]</span>
   );
 }

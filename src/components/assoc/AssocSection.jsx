@@ -311,16 +311,22 @@ export default function AssocSection({ explainMode }) {
           <button onClick={run} disabled={!canRun || assoc.status === "running"}
             style={{
               all: "unset", cursor: canRun && assoc.status !== "running" ? "pointer" : "default",
-              display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 8,
+              display: "inline-flex", alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 2,
               border: `1px solid ${C.pheno}66`, color: C.pheno, fontSize: 13,
+              fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
               opacity: canRun && assoc.status !== "running" ? 1 : 0.55,
+              textShadow: `0 0 8px ${C.pheno}44`,
             }}>
             {assoc.status === "running" ? <Loader2 size={14} className="spin" /> : <Play size={14} />}
-            {assoc.status === "running" ? "Testing…" : matrix?.genes.length > 3000 ? "Run genome-wide scan" : "Run association scan"}
+            {assoc.status === "running" ? "[ testing… ]" : matrix?.genes.length > 3000 ? "[ run_genome_wide_scan ]" : "[ run_association_scan ]"}
           </button>
           {assoc.status === "running" && (
-            <button onClick={assoc.cancel} style={{ all: "unset", cursor: "pointer", fontSize: 12, color: C.bad, border: `1px solid ${C.bad}66`, borderRadius: 6, padding: "7px 12px" }}>
-              Cancel
+            <button onClick={assoc.cancel} style={{
+              all: "unset", cursor: "pointer", fontSize: 12, color: C.bad,
+              fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+              border: `1px solid ${C.bad}66`, borderRadius: 2, padding: "7px 12px",
+            }}>
+              [ cancel ]
             </button>
           )}
           {!canRun && matrix && traitCol && (
@@ -335,8 +341,8 @@ export default function AssocSection({ explainMode }) {
             <div style={{ fontSize: 12, color: C.textDim, marginBottom: 6 }}>
               {STAGE_LABEL[assoc.stage] || "Working…"}{assoc.detail ? ` — ${assoc.detail}` : ""}
             </div>
-            <div style={{ height: 6, background: "#05070a", borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ width: `${assoc.pct}%`, height: "100%", background: C.pheno, transition: "width .2s" }} />
+            <div style={{ height: 6, background: "#05070a", borderRadius: 1, overflow: "hidden" }}>
+              <div style={{ width: `${assoc.pct}%`, height: "100%", background: C.pheno, transition: "width .2s", borderRadius: 1 }} />
             </div>
           </div>
         )}
@@ -428,17 +434,17 @@ export default function AssocSection({ explainMode }) {
 
 const selectStyle = {
   display: "block", width: "100%", marginTop: 6, background: "#05070a", border: `1px solid ${C.border}`,
-  borderRadius: 6, padding: "6px 9px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 12.5,
+  borderRadius: 2, padding: "6px 9px", color: C.text, fontFamily: FONT_DISPLAY, fontSize: 12.5,
 };
 
-function SourceCard({ title, sub, onClick }) {
+function SourceCard({ title, sub, onClick, color }) {
   return (
     <button onClick={onClick} style={{
-      all: "unset", cursor: "pointer", flex: "1 1 220px", padding: "12px 14px", borderRadius: 8,
+      all: "unset", cursor: "pointer", flex: "1 1 220px", padding: "12px 14px", borderRadius: 2,
       background: "#05070a", border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 12.5, color: C.text }}>{title}</div>
-      <div style={{ fontSize: 11, color: C.textFaint, marginTop: 3 }}>{sub}</div>
+      <div style={{ fontSize: 12.5, color: color || C.text, fontFamily: FONT_DISPLAY, textShadow: color ? `0 0 6px ${color}33` : "none" }}>{title}</div>
+      <div style={{ fontSize: 11, color: C.textFaint, marginTop: 3, fontFamily: FONT_DISPLAY }}>{sub}</div>
     </button>
   );
 }
@@ -446,11 +452,13 @@ function SourceCard({ title, sub, onClick }) {
 function Chip({ children, active, onClick, dim }) {
   return (
     <button onClick={onClick} style={{
-      all: "unset", cursor: dim ? "default" : "pointer", fontSize: 11, padding: "4px 10px", borderRadius: 6,
-      background: active ? `${C.pheno}22` : "transparent",
+      all: "unset", cursor: dim ? "default" : "pointer", fontSize: 11, padding: "4px 10px", borderRadius: 2,
+      background: active ? `${C.pheno}22` : "#05070a",
       border: `1px solid ${active ? C.pheno : C.border}`,
       color: dim ? C.textFaint : active ? C.pheno : C.textDim,
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
       opacity: dim ? 0.55 : 1,
+      textShadow: active ? `0 0 6px ${C.pheno}44` : "none",
     }}>{children}</button>
   );
 }
@@ -479,10 +487,10 @@ function StatsRow({ res, sigCount, statView, fdr }) {
 
 function PairCard({ text, sub }) {
   return (
-    <div style={{ background: C.bgPanel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 14px", minWidth: 150 }}>
-      <div style={{ fontSize: 10.5, color: C.textFaint, textTransform: "uppercase", letterSpacing: "0.08em" }}>Top-ranked feature</div>
-      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 13, color: C.pheno, marginTop: 3 }}>{text}</div>
-      {sub && <div style={{ fontSize: 10.5, color: C.textDim, marginTop: 1 }}>{sub}</div>}
+    <div style={{ background: C.bgPanel, border: `1px solid ${C.border}`, borderRadius: 2, padding: "10px 14px", minWidth: 150 }}>
+      <div style={{ fontSize: 10.5, color: C.textFaint, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: FONT_DISPLAY }}>Top-ranked feature</div>
+      <div style={{ fontFamily: FONT_DISPLAY, fontSize: 13, color: C.pheno, marginTop: 3, textShadow: `0 0 8px ${C.pheno}44` }}>{text}</div>
+      {sub && <div style={{ fontSize: 10.5, color: C.textDim, marginTop: 1, fontFamily: FONT_DISPLAY }}>{sub}</div>}
     </div>
   );
 }
@@ -490,11 +498,11 @@ function PairCard({ text, sub }) {
 function SelectedStrip({ row, traitType }) {
   return (
     <div style={{
-      marginTop: 10, padding: "10px 12px", borderRadius: 8, background: `${C.pheno}10`,
-      border: `1px solid ${C.pheno}44`, fontFamily: FONT_DISPLAY, fontSize: 12, color: C.text,
+      marginTop: 10, padding: "10px 12px", borderRadius: 2, background: "#05070a",
+      border: `1px solid ${C.pheno}66`, fontFamily: FONT_DISPLAY, fontSize: 12, color: C.text,
       display: "flex", gap: 18, flexWrap: "wrap",
     }}>
-      <strong style={{ color: C.pheno }}>{row.gene}</strong>
+      <strong style={{ color: C.pheno, textShadow: `0 0 8px ${C.pheno}44` }}>{row.gene}</strong>
       {row.product && <span style={{ color: C.textDim }}>{row.product}</span>}
       {traitType === "binary" ? (
         <>
@@ -517,9 +525,11 @@ function DownloadBtn({ label, onClick }) {
   return (
     <button onClick={onClick} style={{
       all: "unset", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6,
-      fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 6, padding: "6px 12px",
+      fontSize: 12, color: C.good, border: `1px solid ${C.good}66`, borderRadius: 2, padding: "6px 12px",
+      fontFamily: FONT_DISPLAY, textTransform: "uppercase", letterSpacing: "0.06em",
+      textShadow: `0 0 6px ${C.good}44`,
     }}>
-      <FileText size={12} /> {label}
+      <FileText size={12} /> [ {label} ]
     </button>
   );
 }
