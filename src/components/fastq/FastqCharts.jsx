@@ -35,7 +35,7 @@ export default function FastqCharts({ dataset, index, qualityThreshold, minLengt
   if (!dataset) return null;
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
       <ChartPanel title="Read length distribution" color={C.qc}>
         <BarChart data={dataset.lengthHistogram}>
           <CartesianGrid stroke={C.border} vertical={false} />

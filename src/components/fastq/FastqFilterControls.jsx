@@ -37,7 +37,7 @@ export default function FastqFilterControls({
     <Panel style={{ padding: 18 }}>
       <Eyebrow color={C.qc}>Filter thresholds</Eyebrow>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginTop: 8 }}>
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
             <span style={{ fontSize: 12.5, color: C.text }}>Min. mean quality</span>

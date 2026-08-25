@@ -25,7 +25,7 @@ export default function QCDerivedCharts({ dataset, index, previewRecords }) {
   const posQuality = useMemo(() => computePositionalQuality(previewRecords), [previewRecords]);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
       <ChartPanel title="Yield by length (N50 marker)" color={C.qc}
         note={`Reading right-to-left: total bases contributed by reads at or above each length. The marked point is N50 (${dataset.n50.toLocaleString()} bp) — half of all sequenced bases come from reads at least this long.`}>
         <AreaChart data={yieldData.points} margin={{ left: 4, right: 12 }}>

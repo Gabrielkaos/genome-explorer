@@ -74,7 +74,7 @@ export default function AssemblySection({ explainMode }) {
 
       <Panel style={{ padding: 18, marginTop: 16, marginBottom: 16 }}>
         <Eyebrow color={C.assembly}>Choose input reads</Eyebrow>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20, marginTop: 8 }}>
+        <div className="grid-3-col" style={{ gap: 20, marginTop: 8 }}>
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
               <span style={{ fontSize: 12.5, color: C.text }}>Min. length</span>

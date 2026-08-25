@@ -363,7 +363,7 @@ export default function ExplorerSection({ explainMode }) {
             </div>
           </Panel>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 16, alignItems: "start" }}>
+          <div className="grid-sidebar" style={{ gap: 16, alignItems: "start" }}>
             <FeatureList features={features} selectedTag={selectedTag} onSelect={(tag) => {
               setSelectedTag(tag);
               const f = features.find((x) => x.locusTag === tag);

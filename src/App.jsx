@@ -274,9 +274,9 @@ function AppShell() {
   const active = NAV.find((n) => n.id === section);
 
   return (
-    <div style={{
+    <div className="app-container" style={{
       background: C.bg,
-      minHeight: "100%", color: C.text, fontFamily: FONT, display: "flex",
+      minHeight: "100%", color: C.text, fontFamily: FONT,
     }}>
       <style>{`
         ${FONT_IMPORT}
@@ -290,28 +290,29 @@ function AppShell() {
       `}</style>
 
       {/* Sidebar */}
-      <div style={{ width: 212, flexShrink: 0, borderRight: `1px solid ${C.border}`, padding: "18px 10px", display: "flex", flexDirection: "column", gap: 2, background: "#0a0e14" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 8px 18px" }}>
+      <div className="app-sidebar">
+        <div className="app-sidebar-header">
           <span style={{ color: C.prompt, fontFamily: FONT, fontSize: 16, fontWeight: 700 }}>&gt;_</span>
           <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13, color: C.prompt, lineHeight: 1.3, letterSpacing: "0.04em", textShadow: "0 0 10px rgba(0,255,65,0.3)" }}>GENOME<br /><span style={{ color: C.textFaint, fontSize: 9.5, fontWeight: 400, letterSpacing: "0.1em" }}>PIPELINE EXPLORER</span></div>
         </div>
-        {NAV.map((n) => (
-          <button key={n.id} onClick={() => setSection(n.id)}
-            style={{
-              all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, padding: "6px 10px",
-              borderRadius: 2,
-              background: section === n.id ? `${n.color}12` : "transparent",
-              borderLeft: section === n.id ? `2px solid ${n.color}` : "2px solid transparent",
-              color: section === n.id ? n.color : C.textDim, fontSize: 12, fontFamily: FONT,
-              transition: "all .1s",
-            }}
-            onMouseEnter={(e) => { if (section !== n.id) e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
-            onMouseLeave={(e) => { if (section !== n.id) e.currentTarget.style.background = "transparent"; }}
-          >
-            <n.icon size={12} /> {n.label.toLowerCase().replace(/\s+/g, '_')}
-          </button>
-        ))}
-        <div style={{ marginTop: "auto", padding: "12px 8px 0", borderTop: `1px solid ${C.border}` }}>
+        <div className="app-nav-container">
+          {NAV.map((n) => (
+            <button key={n.id} onClick={() => setSection(n.id)}
+              className="nav-button"
+              data-active={section === n.id}
+              style={{
+                background: section === n.id ? `${n.color}12` : "transparent",
+                borderColor: section === n.id ? n.color : "transparent",
+                color: section === n.id ? n.color : C.textDim, fontFamily: FONT,
+              }}
+              onMouseEnter={(e) => { if (section !== n.id) e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+              onMouseLeave={(e) => { if (section !== n.id) e.currentTarget.style.background = "transparent"; }}
+            >
+              <n.icon size={12} /> {n.label.toLowerCase().replace(/\s+/g, '_')}
+            </button>
+          ))}
+        </div>
+        <div className="app-sidebar-footer">
           <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 11, color: C.textDim, fontFamily: FONT, marginBottom: 6 }}>
             <input type="checkbox" checked={explainMode} onChange={(e) => setExplainMode(e.target.checked)} style={{ accentColor: C.prompt }} />
             --explain
@@ -323,7 +324,7 @@ function AppShell() {
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, minWidth: 0, padding: "24px 36px 60px" }}>
+      <div className="app-main">
         <div style={{
           fontSize: 11, color: C.textFaint, fontFamily: FONT,
           padding: "8px 0 10px",

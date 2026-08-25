@@ -297,7 +297,7 @@ export default function MsaSection({ explainMode }) {
             )}
           </Panel>
 
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) minmax(0, 1fr)", gap: 16, marginTop: 16 }}>
+          <div className="grid-2-col-asym1" style={{ gap: 16, marginTop: 16 }}>
             <VariantTable sites={sites} totalSites={res.stats.totalVariableSites}
               selectedCol={selectedCol} onSelect={selectColumn} />
             <IdentityMatrix ids={res.ids} matrix={res.identityMatrix} />

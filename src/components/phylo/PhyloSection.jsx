@@ -325,7 +325,7 @@ export default function PhyloSection({ explainMode }) {
             </LimitBanner>
           </Panel>
 
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr)", gap: 16, alignItems: "start" }}>
+          <div className="grid-2-col-asym2" style={{ gap: 16, alignItems: "start" }}>
             <DistanceMatrix ids={res.ids} matrix={res.matrix}
               transitions={res.transitions} transversions={res.transversions} />
 

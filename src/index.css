@@ -118,3 +118,120 @@ code {
   margin-left: 2px;
   font-size: 0.85em;
 }
+
+/* ── Responsive Layout ── */
+.app-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.app-sidebar {
+  width: 212px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 18px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #0a0e14;
+}
+
+.app-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 18px;
+}
+
+.app-nav-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-sidebar-footer {
+  margin-top: auto;
+  padding: 12px 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 36px 60px;
+}
+
+.nav-button {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 2px;
+  font-size: 12px;
+  transition: all 0.1s;
+  white-space: nowrap;
+  border-left: 2px solid transparent;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  .app-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 10px;
+  }
+  .app-sidebar-header {
+    padding: 0 8px 12px;
+  }
+  .app-nav-container {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .nav-button {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+  }
+  .nav-button[data-active="true"] {
+    border-bottom-color: currentColor;
+  }
+  .app-sidebar-footer {
+    padding: 8px 8px 0;
+    margin-top: 8px;
+  }
+  .app-main {
+    padding: 16px 16px 60px;
+  }
+}
+
+/* ── Responsive Grid Utilities ── */
+.grid-3-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.grid-sidebar {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+}
+.grid-2-col-asym1 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+.grid-2-col-asym2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .grid-3-col,
+  .grid-sidebar,
+  .grid-2-col-asym1,
+  .grid-2-col-asym2 {
+    grid-template-columns: 1fr !important;
+  }
+}
