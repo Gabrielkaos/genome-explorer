@@ -35,7 +35,7 @@ const ExplorerSection = lazy(() => import("./components/explorer/ExplorerSection
  ===================================================================================== */
 const STAGES = [
   {
-    id: "fastq", label: "Nanopore FASTQ", short: "FASTQ", color: C.raw, icon: ScrollText,
+    id: "fastq", navId: "fastq", label: "Nanopore FASTQ", short: "FASTQ", color: C.raw, icon: ScrollText,
     tagline: "Raw long reads straight off the sequencer",
     input: "Electrical signal (\"squiggle\") already basecalled into nucleotide sequences with per-base quality scores.",
     does: "This is a storage format, not an algorithm: four lines per read - an identifier, the called sequence, a '+' separator, and a Phred-encoded quality string, one character per base.",
@@ -44,7 +44,7 @@ const STAGES = [
     limits: "FASTQ says nothing about correctness on its own - a read can be high-confidence and still wrong, or low-confidence and still useful in aggregate.",
   },
   {
-    id: "qc", label: "Quality Control", short: "QC", color: C.qc, icon: Microscope,
+    id: "qc", navId: "qc", label: "Quality Control", short: "QC", color: C.qc, icon: Microscope,
     tagline: "NanoPlot-style statistics and visualization - not filtering",
     input: "The full raw FASTQ read set.",
     does: "Computes summary statistics and renders diagnostic plots (length distribution, quality distribution, yield) so you can judge whether a run is usable. NanoPlot itself never removes or edits a single base - it only measures and visualizes.",
@@ -62,7 +62,7 @@ const STAGES = [
     limits: "Aggressive filtering trades coverage for accuracy; too strict a cutoff can starve the assembler of coverage in some regions.",
   },
   {
-    id: "flye", label: "Flye Assembly", short: "Flye", color: C.assembly, icon: Waypoints,
+    id: "flye", navId: "assembly", label: "Flye Assembly", short: "Flye", color: C.assembly, icon: Waypoints,
     tagline: "Overlap-based long-read genome assembly",
     input: "Filtered long reads.",
     does: "Finds overlaps between reads that must originate from the same genomic region, builds an assembly graph from those overlaps, and resolves it into contiguous consensus sequences.",
@@ -71,7 +71,7 @@ const STAGES = [
     limits: "Repeats longer than read overlaps, uneven coverage, or a noisy read set can fragment the assembly into more contigs than true replicons, or introduce local errors.",
   },
   {
-    id: "bakta", label: "Genome Annotation", short: "Bakta", color: C.annotation, icon: Layers,
+    id: "bakta", navId: "annotation", label: "Genome Annotation", short: "Bakta", color: C.annotation, icon: Layers,
     tagline: "De novo gene calling and protein-level analysis",
     input: "Assembled contig sequences (no reads involved anymore).",
     does: "Predicts protein-coding genes de novo: trains a hexamer coding-statistics model on long ORFs, scans all six frames for stop-to-stop open reading frames, chooses each gene's true start codon using ribosome-binding-site (Shine-Dalgarno) evidence plus coding potential, then computes translated-protein properties (size, pI, hydropathy, transmembrane helices, signal peptides).",
@@ -80,7 +80,7 @@ const STAGES = [
     limits: "Without similarity search against reference databases, every product stays honestly \"hypothetical\" — this tool cannot name a gene's function, and RNA features (rRNA/tRNA) need covariance-model tools like Barrnap/tRNAscan-SE. Gene prediction identifies coding capacity, never confirmed function or phenotype.",
   },
   {
-    id: "msa", label: "Multiple Sequence Alignment", short: "Alignment", color: C.phylo, icon: Table2,
+    id: "msa", navId: "msa", label: "Multiple Sequence Alignment", short: "Alignment", color: C.phylo, icon: Table2,
     tagline: "Lining up homologous sequences to compare them",
     input: "Two or more homologous nucleotide sequences - the same gene (or locus) from several strains, or whole small genomes like virus/mitochondria/plasmid. Upload a multi-FASTA, paste raw sequence text, or align this session's assembled contigs.",
     does: "Runs a genuine progressive multiple sequence alignment in your browser, the architecture ClustalW made standard: all-against-all k-mer distance estimates build an UPGMA guide tree, then closest pairs are aligned first and merged into growing profiles via global dynamic programming with affine gap penalties and sum-of-pairs scoring.",
@@ -89,7 +89,7 @@ const STAGES = [
     limits: "Guide-tree order comes from approximate k-mer distances, and the result is single-pass progressive alignment with no iterative refinement (MAFFT/ClustalOmega polish rounds) or substitution-model selection. Quality degrades with high divergence or many large indels; N/ambiguity codes are treated as gaps; a poor alignment silently corrupts everything built on top of it.",
   },
   {
-    id: "iqtree", label: "Phylogenetic Inference", short: "Phylo", color: C.phylo, icon: GitBranch,
+    id: "iqtree", navId: "tree", label: "Phylogenetic Inference", short: "Phylo", color: C.phylo, icon: GitBranch,
     tagline: "Distance-based tree inference with bootstrap support",
     input: "An ALIGNED sequence matrix - the Alignment section's output, an uploaded aligned FASTA, or pasted homologs (3+ sequences).",
     does: "Estimates every pairwise distance under a substitution model (raw p-distance, Jukes-Cantor, or Kimura 2-parameter, with pairwise/complete gap deletion), then builds the tree whose path lengths best fit that matrix via Neighbor-Joining (clock-free) or UPGMA (molecular-clock, rooted). Confidence per clade comes from genuine nonparametric bootstraps: alignment columns are resampled with replacement and the whole pipeline is rebuilt for every replicate.",
@@ -98,7 +98,7 @@ const STAGES = [
     limits: "Distance methods are fast but not maximum likelihood: no substitution-model selection, no ML branch optimization, and bootstrap percentages are not posterior probabilities. UPGMA's clock assumption is often violated in real data. Relatedness is also not causation - shared ancestry alone can produce shared traits.",
   },
   {
-    id: "assoc", label: "Pan-GWAS Association", short: "Association", color: C.pheno, icon: Network,
+    id: "assoc", navId: "assoc", label: "Pan-GWAS Association", short: "Association", color: C.pheno, icon: Network,
     tagline: "Gene presence/absence vs phenotype, corrected for multiple testing and population structure",
     input: "A gene presence/absence matrix (ROARY/Panaroo .Rtab or gene_presence_absence.csv) and a phenotype metadata table (CSV/TSV) keyed by sample id.",
     does: "Tests every feature with Fisher's exact test on its 2x2 contingency table (Welch's t-test for quantitative traits), reports Haldane-corrected odds ratios with 95% confidence intervals, adjusts p-values with Benjamini-Hochberg FDR and Bonferroni, and - when clade labels or this session's phylogeny are supplied - reruns each comparison within lineages via the Cochran-Mantel-Haenszel stratified test so inherited lineage markers stop masquerading as associations.",
@@ -170,8 +170,8 @@ function PipelineOverview({ explainMode, onJump }) {
                 <span style={{ fontSize: 11, color: s.color, display: "flex", alignItems: "center", gap: 4, fontFamily: FONT }}>
                   [ details ] <ChevronRight size={11} />
                 </span>
-                {onJump && (
-                  <button onClick={(e) => { e.stopPropagation(); onJump(s.id); }}
+                {onJump && s.navId && (
+                  <button onClick={(e) => { e.stopPropagation(); onJump(s.navId); }}
                     style={{ all: "unset", cursor: "pointer", fontSize: 10.5, color: C.textDim, border: `1px solid ${C.border}`, borderRadius: 2, padding: "2px 8px", fontFamily: FONT }}>
                     [ open ]
                   </button>
